@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import DetectionResult from "@/components/DetectionResult";
 import DetectionHistory from "@/components/DetectionHistory";
 import LanguageSelector from "@/components/LanguageSelector";
+import Navigation from "@/components/Navigation";
 
 export default function Detection() {
   const [image, setImage] = useState<string | null>(null);
@@ -64,8 +65,9 @@ export default function Detection() {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-primary">Pest Detection</h1>
           <div className="flex gap-4">

@@ -2,11 +2,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Brain, Zap, Target } from "lucide-react";
+import Navigation from "@/components/Navigation";
 
 export default function Technical() {
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link to="/">
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="mr-2 w-4 h-4" />
