@@ -1,15 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
 import { Leaf } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Navigation() {
   const location = useLocation();
+  const { t } = useLanguage();
   
   const navItems = [
-    { path: "/", label: "HOME" },
-    { path: "/abstract", label: "ABSTRACT" },
-    { path: "/detect", label: "PEST DETECTION" },
-    { path: "/technical", label: "TECHNICAL DETAILS" },
+    { path: "/", label: t('home') },
+    { path: "/abstract", label: t('abstract') },
+    { path: "/detect", label: t('pestDetection') },
+    { path: "/technical", label: t('technicalDetails') },
   ];
 
   return (
@@ -37,6 +39,7 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
+            <LanguageSelector />
           </div>
         </div>
       </div>
