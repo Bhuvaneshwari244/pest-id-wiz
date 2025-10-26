@@ -170,7 +170,7 @@ export const translations: Record<Language, Record<string, string>> = {
       notFoundTitle: '404',
       notFoundSubtitle: '¡Vaya! Página no encontrada',
       goHome: 'Volver al inicio',
-   }
+   },
   te: {
     // Navigation
     home: 'హోమ్',
@@ -250,7 +250,7 @@ export const translations: Record<Language, Record<string, string>> = {
       notFoundTitle: '404',
       notFoundSubtitle: 'అయ్యో! పేజీ కనబడలేదు',
       goHome: 'హోమ్‌కు తిరుగు',
-   }
+   },
   zh: {
     // Navigation
     home: '主页',
@@ -330,7 +330,7 @@ export const translations: Record<Language, Record<string, string>> = {
       notFoundTitle: '404',
       notFoundSubtitle: '抱歉！页面未找到',
       goHome: '返回首页',
-   }
+   },
   pt: {
     // Navigation
     home: 'INÍCIO',
@@ -410,7 +410,7 @@ export const translations: Record<Language, Record<string, string>> = {
       notFoundTitle: '404',
       notFoundSubtitle: 'Ops! Página não encontrada',
       goHome: 'Voltar ao início',
-   }
+   },
   ha: {
     // Navigation (Hausa - Nigerian language)
     home: 'GIDA',
