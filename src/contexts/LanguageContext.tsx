@@ -77,8 +77,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'AI Processing',
     aiDesc: 'Advanced image analysis and pattern recognition',
     cloudInfra: 'Cloud Infrastructure',
-    cloudDesc: 'Scalable backend for real-time processing',
-  },
+      cloudDesc: 'Scalable backend for real-time processing',
+
+      // Common/Toasts
+      invalidImage: 'Invalid Image',
+      detectionComplete: 'Detection Complete',
+      analysisSuccess: 'Analysis successful',
+      errorTitle: 'Error',
+      noHistory: 'No detection history yet',
+      welcomeTitle: 'Welcome to Your Blank App',
+      welcomeSubtitle: 'Start building your amazing project here!',
+      notFoundTitle: '404',
+      notFoundSubtitle: 'Oops! Page not found',
+      goHome: 'Return to Home',
+   },
   es: {
     // Navigation
     home: 'INICIO',
@@ -145,8 +157,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'Procesamiento IA',
     aiDesc: 'Análisis avanzado de imágenes y reconocimiento de patrones',
     cloudInfra: 'Infraestructura en la Nube',
-    cloudDesc: 'Backend escalable para procesamiento en tiempo real',
-  },
+      cloudDesc: 'Backend escalable para procesamiento en tiempo real',
+
+      // Common/Toasts
+      invalidImage: 'Imagen inválida',
+      detectionComplete: 'Detección completada',
+      analysisSuccess: 'Análisis exitoso',
+      errorTitle: 'Error',
+      noHistory: 'Aún no hay historial de detecciones',
+      welcomeTitle: 'Bienvenido a tu aplicación en blanco',
+      welcomeSubtitle: '¡Comienza a construir tu proyecto aquí!',
+      notFoundTitle: '404',
+      notFoundSubtitle: '¡Vaya! Página no encontrada',
+      goHome: 'Volver al inicio',
+   }
   te: {
     // Navigation
     home: 'హోమ్',
@@ -213,8 +237,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'AI ప్రాసెసింగ్',
     aiDesc: 'అధునాతన చిత్ర విశ్లేషణ మరియు నమూనా గుర్తింపు',
     cloudInfra: 'క్లౌడ్ మౌలిక సదుపాయం',
-    cloudDesc: 'నిజ-సమయ ప్రాసెసింగ్ కోసం స్కేలబుల్ బ్యాకెండ్',
-  },
+      cloudDesc: 'నిజ-సమయ ప్రాసెసింగ్ కోసం స్కేలబుల్ బ్యాకెండ్',
+
+      // Common/Toasts
+      invalidImage: 'చెల్లని చిత్రం',
+      detectionComplete: 'డిటెక్షన్ పూర్తైంది',
+      analysisSuccess: 'విశ్లేషణ విజయవంతం',
+      errorTitle: 'లోపం',
+      noHistory: 'ఇప్పటికీ డిటెక్షన్ చరిత్ర లేదు',
+      welcomeTitle: 'మీ ఖాళీ యాప్‌కు స్వాగతం',
+      welcomeSubtitle: 'ఇక్కడి నుంచి మీ ప్రాజెక్ట్‌ను ప్రారంభించండి!',
+      notFoundTitle: '404',
+      notFoundSubtitle: 'అయ్యో! పేజీ కనబడలేదు',
+      goHome: 'హోమ్‌కు తిరుగు',
+   }
   zh: {
     // Navigation
     home: '主页',
@@ -281,8 +317,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'AI处理',
     aiDesc: '高级图像分析和模式识别',
     cloudInfra: '云基础设施',
-    cloudDesc: '用于实时处理的可扩展后端',
-  },
+      cloudDesc: '用于实时处理的可扩展后端',
+
+      // Common/Toasts
+      invalidImage: '无效的图片',
+      detectionComplete: '检测完成',
+      analysisSuccess: '分析成功',
+      errorTitle: '错误',
+      noHistory: '暂无检测历史',
+      welcomeTitle: '欢迎使用你的空白应用',
+      welcomeSubtitle: '从这里开始构建你的项目！',
+      notFoundTitle: '404',
+      notFoundSubtitle: '抱歉！页面未找到',
+      goHome: '返回首页',
+   }
   pt: {
     // Navigation
     home: 'INÍCIO',
@@ -349,8 +397,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'Processamento IA',
     aiDesc: 'Análise avançada de imagens e reconhecimento de padrões',
     cloudInfra: 'Infraestrutura em Nuvem',
-    cloudDesc: 'Backend escalável para processamento em tempo real',
-  },
+      cloudDesc: 'Backend escalável para processamento em tempo real',
+
+      // Common/Toasts
+      invalidImage: 'Imagem inválida',
+      detectionComplete: 'Detecção concluída',
+      analysisSuccess: 'Análise bem-sucedida',
+      errorTitle: 'Erro',
+      noHistory: 'Ainda não há histórico de detecções',
+      welcomeTitle: 'Bem-vindo ao seu app em branco',
+      welcomeSubtitle: 'Comece a construir seu projeto aqui!',
+      notFoundTitle: '404',
+      notFoundSubtitle: 'Ops! Página não encontrada',
+      goHome: 'Voltar ao início',
+   }
   ha: {
     // Navigation (Hausa - Nigerian language)
     home: 'GIDA',
@@ -417,8 +477,20 @@ export const translations: Record<Language, Record<string, string>> = {
     aiProcessing: 'Sarrafa AI',
     aiDesc: 'Bincike mai zurfi na hoto da gane alamu',
     cloudInfra: 'Tushen Gajimare',
-    cloudDesc: 'Backend mai ƙarfi don sarrafa lokaci-lokaci',
-  },
+      cloudDesc: 'Backend mai ƙarfi don sarrafa lokaci-lokaci',
+
+      // Common/Toasts
+      invalidImage: 'Hoto mara inganci',
+      detectionComplete: 'An kammala gano wa',
+      analysisSuccess: 'Bincike ya yi nasara',
+      errorTitle: 'Kuskure',
+      noHistory: 'Babu tarihin ganowa tukuna',
+      welcomeTitle: 'Barka da zuwa aikace-aikacen ku mara komai',
+      welcomeSubtitle: 'Fara gina aikin ku anan!',
+      notFoundTitle: '404',
+      notFoundSubtitle: 'Yi haƙuri! Shafin bai samu ba',
+      goHome: 'Koma Gida',
+   }
 };
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {

@@ -49,19 +49,19 @@ export default function Detection() {
       
       if (data.detection_type === "not_peanut") {
         toast({
-          title: "Invalid Image",
+          title: t('invalidImage'),
           description: data.result_title,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Detection Complete",
-          description: "Analysis successful",
+          title: t('detectionComplete'),
+          description: t('analysisSuccess'),
         });
       }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: t('errorTitle'),
         description: error.message,
         variant: "destructive",
       });

@@ -18,7 +18,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Step 1: Validate if it's a peanut leaf
+    // Step 1: Validate if it's a peanut plant or any plant part (leaf, stem, flower, pod, shell, seed)
     const validationResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -30,14 +30,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are an expert botanist specializing in peanut plants. Analyze if the image is a peanut leaf or plant."
+            content: "You are an expert botanist specializing in peanut plants. Determine if the image shows a peanut plant or ANY of its parts (leaf, stem, flower, root, pod, shell, seed)."
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Is this a peanut (groundnut/Arachis hypogaea) leaf or plant? Answer with just 'YES' or 'NO'."
+                text: "Does this image show a peanut plant or any of its parts (leaf, stem, flower, root, pod, shell, seed)? Answer strictly with YES or NO and include what was detected."
               },
               {
                 type: "image_url",
@@ -50,21 +50,21 @@ serve(async (req) => {
           {
             type: "function",
             function: {
-              name: "validate_peanut_leaf",
-              description: "Validate if image contains peanut leaf",
+              name: "validate_peanut_plant_or_part",
+              description: "Validate if image contains a peanut plant or any plant part (leaf, pod, seed, shell, etc.)",
               parameters: {
                 type: "object",
                 properties: {
-                  is_peanut_leaf: { type: "boolean" },
+                  is_peanut_plant_or_part: { type: "boolean" },
                   detected_plant: { type: "string" }
                 },
-                required: ["is_peanut_leaf"],
+                required: ["is_peanut_plant_or_part"],
                 additionalProperties: false
               }
             }
           }
         ],
-        tool_choice: { type: "function", function: { name: "validate_peanut_leaf" } }
+        tool_choice: { type: "function", function: { name: "validate_peanut_plant_or_part" } }
       }),
     });
 
@@ -73,19 +73,45 @@ serve(async (req) => {
     }
 
     const validationData = await validationResponse.json();
-    const validationArgs = JSON.parse(
-      validationData.choices[0].message.tool_calls[0].function.arguments
-    );
+    const toolCall = validationData.choices?.[0]?.message?.tool_calls?.[0];
+    const validationArgs = toolCall ? JSON.parse(toolCall.function.arguments) : {};
+    const isPeanut = (validationArgs.is_peanut_plant_or_part ?? validationArgs.is_peanut_leaf ?? false) as boolean;
 
-    if (!validationArgs.is_peanut_leaf) {
-      const detectedPlant = validationArgs.detected_plant || "unknown plant";
+    if (!isPeanut) {
+      const detectedPlant = validationArgs.detected_plant || "unknown";
+
+      // Also store invalid attempts so users can see their recent activity
+      try {
+        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        await fetch(`${supabaseUrl}/rest/v1/detection_history`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${supabaseKey}`,
+            "Content-Type": "application/json",
+            apikey: supabaseKey,
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify({
+            detection_type: "not_peanut",
+            result_title: "Not a Peanut Plant",
+            result_description: `This appears to be ${detectedPlant}, not a peanut plant part. Please upload a peanut plant or any of its parts (leaf/pod/seed/shell) for accurate detection.`,
+            severity: "info",
+            confidence_level: 0,
+            image_url: image.substring(0, 500),
+          }),
+        });
+      } catch (e) {
+        console.error("Failed to store invalid detection in history:", e);
+      }
+
       return new Response(
         JSON.stringify({
           detection_type: "not_peanut",
-          result_title: "Not a Peanut Leaf",
-          result_description: `This appears to be ${detectedPlant}, not a peanut leaf. Please upload an image of a peanut plant for accurate pest detection.`,
+          result_title: "Not a Peanut Plant",
+          result_description: `This appears to be ${detectedPlant}, not a peanut plant part. Please upload a peanut plant or any of its parts (leaf/pod/seed/shell) for accurate detection.`,
           severity: "info",
-          confidence_level: 0
+          confidence_level: 0,
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -104,7 +130,7 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are a YOLO-based agricultural AI system specializing in peanut pest and disease detection. 
-            Analyze the image using object detection principles: identify pests, diseases, or symptoms on the peanut leaf.
+            Analyze the image using object detection principles: identify pests, diseases, or symptoms on the peanut plant or any of its parts (leaf, stem, flower, root, pod, shell, seed).
             Provide scientific names, severity assessment, and treatment recommendations.`
           },
           {
@@ -112,7 +138,7 @@ serve(async (req) => {
             content: [
               {
                 type: "text",
-                text: "Analyze this peanut leaf for pests and diseases using YOLO detection methodology."
+                text: "Analyze this peanut plant or any of its parts (leaf/pod/seed/shell) for pests and diseases using YOLO-style detection methodology."
               },
               {
                 type: "image_url",
@@ -177,19 +203,24 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    await fetch(`${supabaseUrl}/rest/v1/detection_history`, {
+    const historyResp = await fetch(`${supabaseUrl}/rest/v1/detection_history`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${supabaseKey}`,
         "Content-Type": "application/json",
-        "apikey": supabaseKey,
-        "Prefer": "return=minimal"
+        apikey: supabaseKey,
+        Prefer: "return=representation",
       },
       body: JSON.stringify({
         ...detectionResult,
-        image_url: image.substring(0, 500) // Store truncated base64
-      })
+        image_url: image.substring(0, 500), // Store truncated base64 to avoid huge payloads
+      }),
     });
+
+    if (!historyResp.ok) {
+      const errText = await historyResp.text();
+      console.error("Failed to insert detection history:", historyResp.status, errText);
+    }
 
     return new Response(
       JSON.stringify(detectionResult),

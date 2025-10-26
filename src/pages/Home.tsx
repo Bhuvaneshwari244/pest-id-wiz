@@ -2,8 +2,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Shield, Cpu, TrendingUp, Users, Sparkles } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -13,24 +15,23 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold text-primary-foreground mb-4">
-              Enhanced Pest Management
+              {t('heroTitle')}
             </h1>
             <p className="text-xl text-primary-foreground/90 mb-8">
-              in Peanut Farming Using CNN
+              {t('heroSubtitle')}
             </p>
             <p className="text-lg text-primary-foreground/80 mb-12 max-w-3xl mx-auto">
-              Revolutionary AI-powered pest detection system specifically designed for peanut crops. Identify 
-              threats early, protect your harvest, and maximize agricultural productivity.
+              {t('easyDesc')}
             </p>
             <div className="flex items-center justify-center gap-4">
               <Link to="/detect">
                 <Button size="lg" variant="secondary" className="text-lg px-8">
-                  Start Detection →
+                  {t('getStarted')}
                 </Button>
               </Link>
               <Link to="/abstract">
                 <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-                  Learn More
+                  {t('learnMore')}
                 </Button>
               </Link>
             </div>
@@ -42,10 +43,9 @@ export default function Home() {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why Choose PeanutGuard AI?</h2>
+            <h2 className="text-4xl font-bold mb-4">{t('whyChoose')}</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Our cutting-edge CNN technology provides farmers with the most accurate and 
-              efficient pest detection solution available today.
+              {t('expertDesc')}
             </p>
           </div>
 
@@ -54,10 +54,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Shield className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Advanced Protection</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('accurateDetection')}</h3>
               <p className="text-muted-foreground">
-                AI-powered pest detection with comprehensive analysis of both visible 
-                insects and damage symptoms.
+                {t('accurateDesc')}
               </p>
             </div>
 
@@ -65,10 +64,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Cpu className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">CNN Technology</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('instantResults')}</h3>
               <p className="text-muted-foreground">
-                Deep learning models trained on thousands of peanut crop images for accurate pest 
-                identification.
+                {t('instantDesc')}
               </p>
             </div>
 
@@ -76,10 +74,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <TrendingUp className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Real-time Analytics</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('expertGuidance')}</h3>
               <p className="text-muted-foreground">
-                Monitor pest trends and track detection history to make informed agricultural 
-                decisions.
+                {t('expertDesc')}
               </p>
             </div>
 
@@ -87,10 +84,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Users className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Expert Support</h3>
+              <h3 className="text-xl font-semibold mb-4">{t('easyToUse')}</h3>
               <p className="text-muted-foreground">
-                Agricultural specialists available with detailed recommendations for integrated 
-                pest management.
+                {t('easyDesc')}
               </p>
             </div>
           </div>
@@ -103,16 +99,15 @@ export default function Home() {
           <div className="max-w-4xl mx-auto text-center">
             <Sparkles className="w-16 h-16 text-primary-foreground mx-auto mb-6" />
             <h2 className="text-4xl font-bold text-primary-foreground mb-6">
-              Ready to Protect Your Peanut Crops?
+              {t('readyToProtect')}
             </h2>
             <p className="text-lg text-primary-foreground/80 mb-10 max-w-2xl mx-auto">
-              Start using our AI-powered detection system today and join thousands of farmers 
-              protecting their harvest with cutting-edge technology.
+              {t('expertDesc')}
             </p>
             <Link to="/detect">
-              <Button size="lg" variant="secondary" className="text-lg px-10">
-                Get Started Now →
-              </Button>
+                <Button size="lg" variant="secondary" className="text-lg px-10">
+                  {t('startDetecting')}
+                </Button>
             </Link>
           </div>
         </div>
@@ -122,7 +117,7 @@ export default function Home() {
       <footer className="bg-background border-t py-8">
         <div className="container mx-auto px-4">
           <p className="text-center text-muted-foreground">
-            © 2024 PeanutGuard AI. Empowering farmers with advanced pest detection technology.
+            © 2024 PeanutGuard AI
           </p>
         </div>
       </footer>

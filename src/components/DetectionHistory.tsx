@@ -4,9 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function DetectionHistory() {
   const [history, setHistory] = useState<any[]>([]);
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function DetectionHistory() {
   if (history.length === 0) {
     return (
       <Card className="p-8 text-center">
-        <p className="text-muted-foreground">No detection history yet</p>
+        <p className="text-muted-foreground">{t('noHistory')}</p>
       </Card>
     );
   }

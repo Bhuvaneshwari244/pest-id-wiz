@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, Bug, CheckCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DetectionResultProps {
   result: {
@@ -16,6 +17,7 @@ interface DetectionResultProps {
 }
 
 export default function DetectionResult({ result, imageUrl }: DetectionResultProps) {
+  const { t } = useLanguage();
   const getSeverityColor = (severity: string) => {
     switch (severity.toLowerCase()) {
       case "high":
@@ -56,7 +58,7 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
 
   return (
     <Card className="p-8">
-      <h2 className="text-2xl font-semibold mb-6">Detection Results</h2>
+      <h2 className="text-2xl font-semibold mb-6">{t('detectionResults')}</h2>
       
       <div className="space-y-6">
         <div>
@@ -69,14 +71,14 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
           </div>
           {result.scientific_name && (
             <p className="text-sm text-muted-foreground italic mb-2">
-              Scientific Name: {result.scientific_name}
+              {t('scientificName')}: {result.scientific_name}
             </p>
           )}
           <p className="text-muted-foreground">{result.result_description}</p>
         </div>
 
         <div>
-          <h4 className="font-semibold mb-2">Confidence Level</h4>
+          <h4 className="font-semibold mb-2">{t('confidenceLevel')}</h4>
           <div className="flex items-center gap-4">
             <div className="flex-1 bg-secondary rounded-full h-3">
               <div
@@ -90,7 +92,7 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
 
         {result.recommendations && (
           <div>
-            <h4 className="font-semibold mb-2">Recommendations</h4>
+            <h4 className="font-semibold mb-2">{t('recommendations')}</h4>
             <div className="bg-accent/50 p-4 rounded-lg">
               <p className="text-sm">{result.recommendations}</p>
             </div>
@@ -98,7 +100,7 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
         )}
 
         <div>
-          <h4 className="font-semibold mb-2">Detection Method</h4>
+          <h4 className="font-semibold mb-2">{t('detectionMethod')}</h4>
           <p className="text-sm text-muted-foreground">
             Analyzed using YOLOv8 algorithm with agricultural pest detection model
           </p>
