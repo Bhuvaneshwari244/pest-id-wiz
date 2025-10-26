@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { image } = await req.json();
+    const { image, detectionType = "comprehensive" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -30,14 +30,33 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are an expert botanist specializing in peanut plants. Determine if the image shows a peanut plant or ANY of its parts (leaf, stem, flower, root, pod, shell, seed)."
+            content: `You are an expert botanist and agricultural scientist specializing in peanut (groundnut/Arachis hypogaea) plants. 
+            Your task is to accurately identify if the image shows ANY part of a peanut plant.
+            
+            PEANUT PLANT PARTS TO RECOGNIZE:
+            - Leaves: Compound leaves with 4 oval leaflets
+            - Stems: Green to reddish-brown stems
+            - Flowers: Small yellow pea-like flowers
+            - Roots: Underground root system
+            - Pods: Wrinkled beige/tan shells (can be dirty, in soil, or cleaned)
+            - Seeds/Kernels: Oval-shaped seeds with reddish-brown or tan papery skin, usually 2 per pod
+            - Shells: Empty peanut shells after removal of seeds
+            
+            IMPORTANT: Peanut seeds can appear:
+            - With skin (light brown/tan/reddish papery coating)
+            - Without skin (pale yellow/cream colored)
+            - Whole or split in half
+            - Fresh, dried, or showing damage/disease
+            - Clean or with soil/debris
+            
+            Be GENEROUS in identification - if it could reasonably be a peanut part, classify it as peanut.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Does this image show a peanut plant or any of its parts (leaf, stem, flower, root, pod, shell, seed)? Answer strictly with YES or NO and include what was detected."
+                text: "Carefully examine this image. Does it show a peanut plant or ANY of its parts (leaf, stem, flower, root, pod, shell, or seed)? Be thorough - peanut seeds can have skin on/off, be whole/split, fresh/dried, clean/dirty, or show damage."
               },
               {
                 type: "image_url",
@@ -117,7 +136,34 @@ serve(async (req) => {
       );
     }
 
-    // Step 2: Detect pests/diseases using YOLO-style analysis
+    // Step 2: Detect pests/diseases/insects based on detection type
+    let systemPrompt = "";
+    let userPrompt = "";
+    
+    switch (detectionType) {
+      case "insect":
+        systemPrompt = `You are an expert entomologist specializing in agricultural pests, particularly those affecting peanut crops.
+        Analyze the image to identify ANY insects, bugs, or arthropods present on or near the peanut plant part.
+        Provide the insect's common and scientific names, describe the threat level, and recommend appropriate control measures.`;
+        userPrompt = "Identify any insects, bugs, beetles, aphids, caterpillars, or other arthropods in this image. Focus on insect identification, not disease symptoms.";
+        break;
+      
+      case "damage":
+        systemPrompt = `You are a plant pathologist specializing in peanut diseases and physiological disorders.
+        Analyze the image to identify disease symptoms, nutrient deficiencies, physical damage, or other non-insect problems affecting the peanut plant part.
+        Provide the disease/condition name, severity, and treatment recommendations. Do NOT focus on insects.`;
+        userPrompt = "Identify any disease symptoms, leaf spots, wilting, discoloration, nutrient deficiencies, or physical damage on this peanut plant part. Focus on disease/damage, not insects.";
+        break;
+      
+      case "comprehensive":
+      default:
+        systemPrompt = `You are a comprehensive agricultural AI system specializing in peanut crop health analysis.
+        Analyze the image using advanced detection methodology to identify ANY issues: insect pests, diseases, nutrient deficiencies, or physical damage affecting the peanut plant part.
+        Provide scientific identification, severity assessment, and detailed treatment recommendations.`;
+        userPrompt = "Perform a comprehensive analysis of this peanut plant part. Identify any insects, pests, diseases, nutrient deficiencies, or damage present. Provide complete diagnosis and recommendations.";
+        break;
+    }
+    
     const detectionResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -129,16 +175,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a YOLO-based agricultural AI system specializing in peanut pest and disease detection. 
-            Analyze the image using object detection principles: identify pests, diseases, or symptoms on the peanut plant or any of its parts (leaf, stem, flower, root, pod, shell, seed).
-            Provide scientific names, severity assessment, and treatment recommendations.`
+            content: systemPrompt
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analyze this peanut plant or any of its parts (leaf/pod/seed/shell) for pests and diseases using YOLO-style detection methodology."
+                text: userPrompt
               },
               {
                 type: "image_url",

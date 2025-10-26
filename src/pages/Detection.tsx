@@ -40,7 +40,10 @@ export default function Detection() {
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("analyze-pest", {
-        body: { image },
+        body: { 
+          image,
+          detectionType 
+        },
       });
 
       if (error) throw error;
