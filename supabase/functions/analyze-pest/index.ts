@@ -18,7 +18,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Step 1: Validate if it's a peanut plant or any plant part (leaf, stem, flower, pod, shell, seed)
+    // Step 1: Validate if the image is relevant to peanut crop analysis
     const validationResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -30,32 +30,45 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a peanut plant identification expert. Your ONLY job is to determine: "Is this ANY part of a peanut (Arachis hypogaea) plant?"
+            content: `You are a peanut crop analysis validation expert. Your job is to determine if this image is RELEVANT for peanut crop analysis.
 
-RETURN TRUE (is_peanut_plant_or_part = true) IF YOU SEE:
-✓ Peanut leaves (compound, 4 leaflets)
-✓ Peanut stems (green/reddish-brown)
-✓ Peanut flowers (small yellow)
-✓ Peanut roots
-✓ Peanut pods (wrinkled tan/beige shells)
-✓ Peanut shells (empty or with seeds)
-✓ Peanut seeds/kernels (with skin: tan/brown papery coating, OR without skin: pale cream/yellow)
-✓ ANY of the above in ANY condition: fresh, dried, damaged, moldy, clean, dirty, whole, split, broken
+RETURN TRUE (is_valid_for_analysis = true) IF YOU SEE ANY OF THESE:
 
-RETURN FALSE (is_peanut_plant_or_part = false) ONLY IF:
-✗ It's a completely different plant (corn, wheat, rice, other legumes)
-✗ It's a different type of nut (almond, cashew, walnut)
-✗ It's not plant-related at all
+1. PEANUT PLANT PARTS:
+   ✓ Peanut leaves (compound, 4 leaflets)
+   ✓ Peanut stems (green/reddish-brown)
+   ✓ Peanut flowers (small yellow)
+   ✓ Peanut roots
+   ✓ Peanut pods (wrinkled tan/beige shells)
+   ✓ Peanut shells (empty or with seeds)
+   ✓ Peanut seeds/kernels (with or without skin, whole or split)
 
-CRITICAL: If you see peanut pods, peanut seeds, peanut shells, or any peanut plant part → RETURN TRUE
-Only return FALSE if it's definitely NOT peanut.`
+2. INSECTS/PESTS ON OR NEAR PEANUT PLANTS:
+   ✓ Aphids, thrips, caterpillars, beetles ON peanut leaves/stems/pods
+   ✓ Any insect pest visible WITH peanut plant parts in the image
+   ✓ Close-up of insects that are peanut crop pests (even if plant not fully visible)
+
+3. DAMAGE/DISEASE ON PEANUT PLANTS:
+   ✓ Leaf spots, discoloration, wilting ON peanut leaves
+   ✓ Pod rot, shell damage, seed damage
+   ✓ Any disease symptoms visible on peanut plant parts
+
+RETURN FALSE (is_valid_for_analysis = false) ONLY IF:
+✗ Different plant species (corn, wheat, rice, cotton, tomato, etc.)
+✗ Insects NOT related to peanuts AND no peanut plant visible
+✗ Different nuts (almonds, walnuts, cashews)
+✗ Completely unrelated objects
+
+CONTEXT MATTERS: If you see an insect ON or NEAR peanut plant parts → TRUE
+If you see damage/disease ON peanut plant parts → TRUE
+Only reject if it's clearly NOT related to peanut crops.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Look at this image. Is this ANY part of a peanut plant? (leaf, stem, flower, root, pod, shell, seed, or kernel). Answer TRUE if it's peanut, FALSE if it's not peanut."
+                text: "Analyze this image. Is it relevant for peanut crop analysis? This includes peanut plant parts, insects ON peanuts, or damage TO peanuts. Return TRUE if relevant, FALSE if not."
               },
               {
                 type: "image_url",
@@ -68,31 +81,31 @@ Only return FALSE if it's definitely NOT peanut.`
           {
             type: "function",
             function: {
-              name: "validate_peanut_plant_or_part",
-              description: "RETURN TRUE if image shows ANY peanut part (pods/seeds/shells count as peanut!), FALSE only if NOT peanut",
+              name: "validate_peanut_relevance",
+              description: "Validate if image is relevant for peanut crop analysis (plant parts, insects on peanuts, or damage to peanuts)",
               parameters: {
                 type: "object",
                 properties: {
-                  is_peanut_plant_or_part: { 
+                  is_valid_for_analysis: { 
                     type: "boolean",
-                    description: "TRUE = peanut part detected (including pods, seeds, shells). FALSE = NOT peanut"
+                    description: "TRUE = relevant for peanut analysis (plant parts, pests ON peanuts, damage TO peanuts). FALSE = NOT peanut-related"
                   },
-                  detected_part_type: { 
+                  detected_content: { 
                     type: "string",
-                    description: "Specify what you see: 'peanut seed', 'peanut pod', 'peanut leaf', 'peanut shell', etc. OR if not peanut: 'corn', 'wheat', etc."
+                    description: "What you see: 'peanut leaf with aphids', 'peanut pod', 'thrips on peanut', 'damaged peanut seed', OR if invalid: 'cotton plant', 'corn seed', 'random insect', etc."
                   },
                   confidence: {
                     type: "string",
                     description: "Your confidence level: 'high', 'medium', or 'low'"
                   }
                 },
-                required: ["is_peanut_plant_or_part", "detected_part_type"],
+                required: ["is_valid_for_analysis", "detected_content"],
                 additionalProperties: false
               }
             }
           }
         ],
-        tool_choice: { type: "function", function: { name: "validate_peanut_plant_or_part" } }
+        tool_choice: { type: "function", function: { name: "validate_peanut_relevance" } }
       }),
     });
 
@@ -114,16 +127,16 @@ Only return FALSE if it's definitely NOT peanut.`
     const validationArgs = JSON.parse(toolCall.function.arguments);
     console.log("Parsed validation args:", JSON.stringify(validationArgs, null, 2));
     
-    const isPeanut = validationArgs.is_peanut_plant_or_part === true;
-    const detectedPartType = validationArgs.detected_part_type || "unknown item";
+    const isValidForAnalysis = validationArgs.is_valid_for_analysis === true;
+    const detectedContent = validationArgs.detected_content || "unknown item";
     const confidence = validationArgs.confidence || "unknown";
 
-    console.log(`VALIDATION RESULT: isPeanut=${isPeanut}, type=${detectedPartType}, confidence=${confidence}`);
+    console.log(`VALIDATION RESULT: isValid=${isValidForAnalysis}, content=${detectedContent}, confidence=${confidence}`);
 
-    if (!isPeanut) {
-      const errorMessage = `This image shows "${detectedPartType}", which is not a peanut plant part. Please upload an image containing peanut leaves, stems, flowers, roots, pods, shells, or seeds for accurate pest and disease detection.`;
+    if (!isValidForAnalysis) {
+      const errorMessage = `This image shows "${detectedContent}", which is not relevant for peanut crop analysis. Please upload an image of peanut plants (leaves, stems, flowers, pods, seeds) or insects/damage on peanut plants.`;
       
-      console.log("REJECTING - Not a peanut part. Message:", errorMessage);
+      console.log("REJECTING - Not peanut-related. Message:", errorMessage);
       
       // Store invalid attempts
       try {
@@ -139,7 +152,7 @@ Only return FALSE if it's definitely NOT peanut.`
           },
           body: JSON.stringify({
             detection_type: "not_peanut",
-            result_title: "Invalid Image",
+            result_title: "Not Peanut-Related",
             result_description: errorMessage,
             severity: "info",
             confidence_level: 0,
@@ -153,7 +166,7 @@ Only return FALSE if it's definitely NOT peanut.`
       return new Response(
         JSON.stringify({
           detection_type: "not_peanut",
-          result_title: "Invalid Image",
+          result_title: "Not Peanut-Related",
           result_description: errorMessage,
           severity: "info",
           confidence_level: 0,
@@ -162,7 +175,7 @@ Only return FALSE if it's definitely NOT peanut.`
       );
     }
 
-    console.log(`✓ VALIDATION PASSED - Detected: ${detectedPartType}`);
+    console.log(`✓ VALIDATION PASSED - Detected: ${detectedContent}`);
     console.log(`Proceeding with ${detectionType} detection...`);
 
     // Step 2: Detect pests/diseases/insects based on detection type
