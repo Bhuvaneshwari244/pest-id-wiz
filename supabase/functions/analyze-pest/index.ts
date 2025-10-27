@@ -30,33 +30,39 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an expert botanist and agricultural scientist specializing in peanut (groundnut/Arachis hypogaea) plants. 
-            Your task is to accurately identify if the image shows ANY part of a peanut plant.
+            content: `You are an expert botanist and agricultural scientist specializing in peanut (groundnut/Arachis hypogaea) identification.
             
-            PEANUT PLANT PARTS TO RECOGNIZE:
+            CRITICAL TASK: Determine if the image contains ANY part of a peanut plant. Return TRUE for peanut parts, FALSE for non-peanut items.
+            
+            ACCEPT AS PEANUT (return is_peanut_plant_or_part = true):
             - Leaves: Compound leaves with 4 oval leaflets
-            - Stems: Green to reddish-brown stems
+            - Stems: Green to reddish-brown stems  
             - Flowers: Small yellow pea-like flowers
             - Roots: Underground root system
-            - Pods: Wrinkled beige/tan shells (can be dirty, in soil, or cleaned)
-            - Seeds/Kernels: Oval-shaped seeds with reddish-brown or tan papery skin, usually 2 per pod
-            - Shells: Empty peanut shells after removal of seeds
+            - Pods/Shells: Wrinkled beige/tan shells (dirty, in soil, or cleaned)
+            - Seeds/Kernels: Oval seeds with OR without papery skin, whole or split, fresh/dried/damaged, 1-2 per pod
             
-            IMPORTANT: Peanut seeds can appear:
-            - With skin (light brown/tan/reddish papery coating)
-            - Without skin (pale yellow/cream colored)
-            - Whole or split in half
-            - Fresh, dried, or showing damage/disease
-            - Clean or with soil/debris
+            PEANUT SEEDS APPEAR AS:
+            - Light brown/tan with thin papery skin
+            - Pale cream/yellow without skin (blanched)
+            - Whole, split in half, or broken
+            - Fresh, dried, moldy, or damaged
+            - Clean or with soil/debris attached
             
-            Be GENEROUS in identification - if it could reasonably be a peanut part, classify it as peanut.`
+            REJECT AS NON-PEANUT (return is_peanut_plant_or_part = false):
+            - Other crop plants (corn, wheat, rice, beans, etc.)
+            - Other legume seeds (chickpeas, lentils, soybeans, etc.)
+            - Tree nuts (almonds, cashews, walnuts, etc.)
+            - Unrelated objects
+            
+            BE GENEROUS: If it looks like it could be a peanut part, classify it as peanut.`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Carefully examine this image. Does it show a peanut plant or ANY of its parts (leaf, stem, flower, root, pod, shell, or seed)? Be thorough - peanut seeds can have skin on/off, be whole/split, fresh/dried, clean/dirty, or show damage."
+                text: "Analyze this image carefully. Is this a peanut plant part (leaf, stem, flower, root, pod, shell, OR seed)? Return TRUE if it's any peanut part, FALSE only if it's not peanut-related at all."
               },
               {
                 type: "image_url",
@@ -70,14 +76,20 @@ serve(async (req) => {
             type: "function",
             function: {
               name: "validate_peanut_plant_or_part",
-              description: "Validate if image contains a peanut plant or any plant part (leaf, pod, seed, shell, etc.)",
+              description: "Return TRUE if image contains ANY peanut part (leaf/stem/flower/root/pod/shell/seed), FALSE if not peanut",
               parameters: {
                 type: "object",
                 properties: {
-                  is_peanut_plant_or_part: { type: "boolean" },
-                  detected_plant: { type: "string" }
+                  is_peanut_plant_or_part: { 
+                    type: "boolean",
+                    description: "TRUE if peanut part detected, FALSE if not peanut"
+                  },
+                  detected_part_type: { 
+                    type: "string",
+                    description: "What peanut part was detected (e.g., 'seed', 'pod', 'leaf', 'shell') or what non-peanut item"
+                  }
                 },
-                required: ["is_peanut_plant_or_part"],
+                required: ["is_peanut_plant_or_part", "detected_part_type"],
                 additionalProperties: false
               }
             }
@@ -92,14 +104,19 @@ serve(async (req) => {
     }
 
     const validationData = await validationResponse.json();
+    console.log("Validation response:", JSON.stringify(validationData, null, 2));
+    
     const toolCall = validationData.choices?.[0]?.message?.tool_calls?.[0];
     const validationArgs = toolCall ? JSON.parse(toolCall.function.arguments) : {};
-    const isPeanut = (validationArgs.is_peanut_plant_or_part ?? validationArgs.is_peanut_leaf ?? false) as boolean;
+    const isPeanut = validationArgs.is_peanut_plant_or_part === true;
+    const detectedPartType = validationArgs.detected_part_type || "unknown item";
+
+    console.log("Validation result - isPeanut:", isPeanut, "detectedPartType:", detectedPartType);
 
     if (!isPeanut) {
-      const detectedPlant = validationArgs.detected_plant || "unknown";
-
-      // Also store invalid attempts so users can see their recent activity
+      const errorMessage = `This appears to be ${detectedPartType}, not a peanut plant part. Please upload an image of a peanut plant (leaf, seed, pod, shell, flower, stem, or root) for accurate pest and disease detection.`;
+      
+      // Store invalid attempts
       try {
         const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
         const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -113,8 +130,8 @@ serve(async (req) => {
           },
           body: JSON.stringify({
             detection_type: "not_peanut",
-            result_title: "Not a Peanut Plant",
-            result_description: `This appears to be ${detectedPlant}, not a peanut plant part. Please upload a peanut plant or any of its parts (leaf/pod/seed/shell) for accurate detection.`,
+            result_title: "Not a Peanut Plant Part",
+            result_description: errorMessage,
             severity: "info",
             confidence_level: 0,
             image_url: image.substring(0, 500),
@@ -127,8 +144,8 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           detection_type: "not_peanut",
-          result_title: "Not a Peanut Plant",
-          result_description: `This appears to be ${detectedPlant}, not a peanut plant part. Please upload a peanut plant or any of its parts (leaf/pod/seed/shell) for accurate detection.`,
+          result_title: "Not a Peanut Plant Part",
+          result_description: errorMessage,
           severity: "info",
           confidence_level: 0,
         }),
