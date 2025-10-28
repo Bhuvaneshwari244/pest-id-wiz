@@ -22,7 +22,7 @@ export default function Detection() {
   const [showHistory, setShowHistory] = useState(false);
   const [detectionType, setDetectionType] = useState<DetectionType>("damage");
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, session, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -57,7 +57,8 @@ export default function Detection() {
       const { data, error } = await supabase.functions.invoke("analyze-pest", {
         body: { 
           image,
-          detectionType 
+          detectionType,
+          language
         },
         headers: {
           Authorization: `Bearer ${session.access_token}`,

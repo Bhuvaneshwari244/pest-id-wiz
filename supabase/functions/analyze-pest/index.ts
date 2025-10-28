@@ -38,7 +38,7 @@ serve(async (req) => {
 
     console.log(`✓ Authenticated user: ${user.id}`);
 
-    const { image, detectionType = "comprehensive" } = await req.json();
+    const { image, detectionType = "comprehensive", language = "en" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -199,27 +199,51 @@ Only reject if it's clearly NOT related to peanut crops.`
     let systemPrompt = "";
     let userPrompt = "";
     
+    // Language instruction
+    const languageMap: Record<string, string> = {
+      en: "English",
+      es: "Spanish",
+      te: "Telugu",
+      zh: "Chinese",
+      pt: "Portuguese",
+      ha: "Hausa"
+    };
+    const targetLanguage = languageMap[language] || "English";
+    const languageInstruction = `CRITICAL: Respond in ${targetLanguage} language. All text must be in ${targetLanguage}.`;
+    
     switch (detectionType) {
       case "insect":
         systemPrompt = `You are an expert entomologist specializing in agricultural pests, particularly those affecting peanut crops.
+        ${languageInstruction}
         Analyze the image to identify ANY insects, bugs, or arthropods present on or near the peanut plant part.
-        Provide the insect's common and scientific names, describe the threat level, and recommend appropriate control measures.`;
-        userPrompt = "Identify any insects, bugs, beetles, aphids, caterpillars, or other arthropods in this image. Focus on insect identification, not disease symptoms.";
+        Provide the insect's common and scientific names, describe the threat level, and provide THREE types of recommendations:
+        1. Cultural control methods (farming practices)
+        2. Chemical control methods (pesticides with specific names)
+        3. Biological control methods (natural predators, beneficial organisms)`;
+        userPrompt = `Identify any insects, bugs, beetles, aphids, caterpillars, or other arthropods in this image. Focus on insect identification, not disease symptoms. Respond in ${targetLanguage}.`;
         break;
       
       case "damage":
         systemPrompt = `You are a plant pathologist specializing in peanut diseases and physiological disorders.
+        ${languageInstruction}
         Analyze the image to identify disease symptoms, nutrient deficiencies, physical damage, or other non-insect problems affecting the peanut plant part.
-        Provide the disease/condition name, severity, and treatment recommendations. Do NOT focus on insects.`;
-        userPrompt = "Identify any disease symptoms, leaf spots, wilting, discoloration, nutrient deficiencies, or physical damage on this peanut plant part. Focus on disease/damage, not insects.";
+        Provide the disease/condition name, severity, and THREE types of treatment recommendations:
+        1. Cultural practices (crop rotation, sanitation)
+        2. Chemical treatments (fungicides, fertilizers with specific names)
+        3. Biological solutions (beneficial microbes, organic treatments)`;
+        userPrompt = `Identify any disease symptoms, leaf spots, wilting, discoloration, nutrient deficiencies, or physical damage on this peanut plant part. Focus on disease/damage, not insects. Respond in ${targetLanguage}.`;
         break;
       
       case "comprehensive":
       default:
         systemPrompt = `You are a comprehensive agricultural AI system specializing in peanut crop health analysis.
+        ${languageInstruction}
         Analyze the image using advanced detection methodology to identify ANY issues: insect pests, diseases, nutrient deficiencies, or physical damage affecting the peanut plant part.
-        Provide scientific identification, severity assessment, and detailed treatment recommendations.`;
-        userPrompt = "Perform a comprehensive analysis of this peanut plant part. Identify any insects, pests, diseases, nutrient deficiencies, or damage present. Provide complete diagnosis and recommendations.";
+        Provide scientific identification, severity assessment, and THREE types of detailed recommendations:
+        1. Cultural control methods (farming practices, crop management)
+        2. Chemical control methods (specific pesticides, fungicides, or fertilizers)
+        3. Biological control methods (natural enemies, beneficial organisms)`;
+        userPrompt = `Perform a comprehensive analysis of this peanut plant part. Identify any insects, pests, diseases, nutrient deficiencies, or damage present. Provide complete diagnosis and recommendations in THREE categories. Respond in ${targetLanguage}.`;
         break;
     }
     
@@ -255,7 +279,7 @@ Only reject if it's clearly NOT related to peanut crops.`
             type: "function",
             function: {
               name: "detect_pest_disease",
-              description: "Detect pests or diseases on peanut leaf",
+              description: "Detect pests or diseases on peanut leaf with structured recommendations",
               parameters: {
                 type: "object",
                 properties: {
@@ -263,8 +287,8 @@ Only reject if it's clearly NOT related to peanut crops.`
                     type: "string",
                     enum: ["pest", "disease", "healthy"]
                   },
-                  result_title: { type: "string" },
-                  result_description: { type: "string" },
+                  result_title: { type: "string", description: "Title in the target language" },
+                  result_description: { type: "string", description: "Description in the target language" },
                   scientific_name: { type: "string" },
                   severity: {
                     type: "string",
@@ -275,14 +299,33 @@ Only reject if it's clearly NOT related to peanut crops.`
                     minimum: 0,
                     maximum: 100
                   },
-                  recommendations: { type: "string" }
+                  cultural_recommendations: { 
+                    type: "string",
+                    description: "Cultural control methods and farming practices in target language"
+                  },
+                  chemical_recommendations: { 
+                    type: "string",
+                    description: "Chemical control methods with specific pesticide/fungicide names in target language"
+                  },
+                  biological_recommendations: { 
+                    type: "string",
+                    description: "Biological control methods and natural solutions in target language"
+                  },
+                  pesticide_names: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "List of 2-3 specific pesticide/chemical product names mentioned in chemical recommendations"
+                  }
                 },
                 required: [
                   "detection_type",
                   "result_title",
                   "result_description",
                   "severity",
-                  "confidence_level"
+                  "confidence_level",
+                  "cultural_recommendations",
+                  "chemical_recommendations",
+                  "biological_recommendations"
                 ],
                 additionalProperties: false
               }
@@ -302,10 +345,62 @@ Only reject if it's clearly NOT related to peanut crops.`
       detectionData.choices[0].message.tool_calls[0].function.arguments
     );
 
+    // Generate pesticide images if chemical recommendations exist
+    let pesticideImages: string[] = [];
+    if (detectionResult.pesticide_names && detectionResult.pesticide_names.length > 0) {
+      try {
+        const imagePromises = detectionResult.pesticide_names.slice(0, 3).map(async (pesticideName: string) => {
+          const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "google/gemini-2.5-flash-image-preview",
+              messages: [
+                {
+                  role: "user",
+                  content: `Generate a clear product image of ${pesticideName} pesticide bottle or container. Show the label clearly with the product name visible. Professional agricultural product photography style.`
+                }
+              ],
+              modalities: ["image", "text"]
+            }),
+          });
+
+          if (imageResponse.ok) {
+            const imageData = await imageResponse.json();
+            return imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+          }
+          return null;
+        });
+
+        const images = await Promise.all(imagePromises);
+        pesticideImages = images.filter(img => img !== null);
+        console.log(`Generated ${pesticideImages.length} pesticide images`);
+      } catch (e) {
+        console.error("Failed to generate pesticide images:", e);
+      }
+    }
+
+    const finalResult = {
+      ...detectionResult,
+      pesticide_images: pesticideImages
+    };
+
+    // Combine recommendations for database storage (legacy field)
+    const combinedRecommendations = `Cultural: ${detectionResult.cultural_recommendations || 'N/A'}\n\nChemical: ${detectionResult.chemical_recommendations || 'N/A'}\n\nBiological: ${detectionResult.biological_recommendations || 'N/A'}`;
+
     // Save to database with user_id
     const { error: insertError } = await supabase.from('detection_history').insert({
       user_id: user.id,
-      ...detectionResult,
+      detection_type: detectionResult.detection_type,
+      result_title: detectionResult.result_title,
+      result_description: detectionResult.result_description,
+      scientific_name: detectionResult.scientific_name,
+      severity: detectionResult.severity,
+      confidence_level: detectionResult.confidence_level,
+      recommendations: combinedRecommendations,
       image_url: image.substring(0, 500),
     });
 
@@ -314,7 +409,7 @@ Only reject if it's clearly NOT related to peanut crops.`
     }
 
     return new Response(
-      JSON.stringify(detectionResult),
+      JSON.stringify(finalResult),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
