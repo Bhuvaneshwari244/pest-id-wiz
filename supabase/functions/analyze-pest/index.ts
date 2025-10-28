@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,32 @@ serve(async (req) => {
   }
 
   try {
+    // Get authenticated user
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user) {
+      console.error("Authentication error:", authError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`✓ Authenticated user: ${user.id}`);
+
     const { image, detectionType = "comprehensive" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
@@ -138,26 +165,16 @@ Only reject if it's clearly NOT related to peanut crops.`
       
       console.log("REJECTING - Not peanut-related. Message:", errorMessage);
       
-      // Store invalid attempts
+      // Store invalid attempts with user_id
       try {
-        const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-        await fetch(`${supabaseUrl}/rest/v1/detection_history`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${supabaseKey}`,
-            "Content-Type": "application/json",
-            apikey: supabaseKey,
-            Prefer: "return=minimal",
-          },
-          body: JSON.stringify({
-            detection_type: "not_peanut",
-            result_title: "Not Peanut-Related",
-            result_description: errorMessage,
-            severity: "info",
-            confidence_level: 0,
-            image_url: image.substring(0, 500),
-          }),
+        await supabase.from('detection_history').insert({
+          user_id: user.id,
+          detection_type: "not_peanut",
+          result_title: "Not Peanut-Related",
+          result_description: errorMessage,
+          severity: "info",
+          confidence_level: 0,
+          image_url: image.substring(0, 500),
         });
       } catch (e) {
         console.error("Failed to store invalid detection in history:", e);
@@ -285,27 +302,15 @@ Only reject if it's clearly NOT related to peanut crops.`
       detectionData.choices[0].message.tool_calls[0].function.arguments
     );
 
-    // Save to database
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-
-    const historyResp = await fetch(`${supabaseUrl}/rest/v1/detection_history`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${supabaseKey}`,
-        "Content-Type": "application/json",
-        apikey: supabaseKey,
-        Prefer: "return=representation",
-      },
-      body: JSON.stringify({
-        ...detectionResult,
-        image_url: image.substring(0, 500), // Store truncated base64 to avoid huge payloads
-      }),
+    // Save to database with user_id
+    const { error: insertError } = await supabase.from('detection_history').insert({
+      user_id: user.id,
+      ...detectionResult,
+      image_url: image.substring(0, 500),
     });
 
-    if (!historyResp.ok) {
-      const errText = await historyResp.text();
-      console.error("Failed to insert detection history:", historyResp.status, errText);
+    if (insertError) {
+      console.error("Failed to insert detection history:", insertError);
     }
 
     return new Response(

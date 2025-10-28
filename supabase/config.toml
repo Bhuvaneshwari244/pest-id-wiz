@@ -1,1 +1,4 @@
 project_id = "hvkpljrsmlhrovfwzkiz"
+
+[functions.analyze-pest]
+verify_jwt = true

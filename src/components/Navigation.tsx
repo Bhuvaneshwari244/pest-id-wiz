@@ -1,11 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { Leaf } from "lucide-react";
+import { Leaf, LogOut } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LanguageSelector from "./LanguageSelector";
+import { Button } from "./ui/button";
 
 export default function Navigation() {
   const location = useLocation();
   const { t } = useLanguage();
+  const { user, signOut } = useAuth();
   
   const navItems = [
     { path: "/", label: t('home') },
@@ -40,6 +43,16 @@ export default function Navigation() {
               </Link>
             ))}
             <LanguageSelector />
+            {user && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => signOut()}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            )}
           </div>
         </div>
       </div>
