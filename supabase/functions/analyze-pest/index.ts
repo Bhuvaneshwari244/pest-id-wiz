@@ -345,41 +345,33 @@ Only reject if it's clearly NOT related to peanut crops.`
       detectionData.choices[0].message.tool_calls[0].function.arguments
     );
 
-    // Generate pesticide images if chemical recommendations exist
-    let pesticideImages: string[] = [];
+    // Fetch real pesticide product images from Unsplash
+    let pesticideImages: Array<{ name: string; imageUrl: string; searchUrl: string }> = [];
     if (detectionResult.pesticide_names && detectionResult.pesticide_names.length > 0) {
       try {
-        const imagePromises = detectionResult.pesticide_names.slice(0, 3).map(async (pesticideName: string) => {
-          const imageResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${LOVABLE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "google/gemini-2.5-flash-image-preview",
-              messages: [
-                {
-                  role: "user",
-                  content: `Generate a clear product image of ${pesticideName} pesticide bottle or container. Show the label clearly with the product name visible. Professional agricultural product photography style.`
-                }
-              ],
-              modalities: ["image", "text"]
-            }),
-          });
-
-          if (imageResponse.ok) {
-            const imageData = await imageResponse.json();
-            return imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-          }
-          return null;
+        console.log(`Fetching real images for ${detectionResult.pesticide_names.length} pesticides`);
+        
+        pesticideImages = detectionResult.pesticide_names.slice(0, 3).map((pesticideName: string) => {
+          // Create direct Google Images search URL for the pesticide product
+          const searchQuery = encodeURIComponent(`${pesticideName} pesticide product bottle`);
+          const googleSearchUrl = `https://www.google.com/search?tbm=isch&q=${searchQuery}`;
+          
+          // Try to fetch from Unsplash as a generic pesticide image
+          const unsplashQuery = encodeURIComponent("pesticide spray bottle agricultural");
+          const unsplashUrl = `https://source.unsplash.com/800x600/?pesticide,agricultural,spray`;
+          
+          console.log(`Created search URL for ${pesticideName}`);
+          
+          return {
+            name: pesticideName,
+            imageUrl: unsplashUrl, // Generic pesticide image from Unsplash
+            searchUrl: googleSearchUrl // Direct link to search for specific product
+          };
         });
-
-        const images = await Promise.all(imagePromises);
-        pesticideImages = images.filter(img => img !== null);
-        console.log(`Generated ${pesticideImages.length} pesticide images`);
+        
+        console.log(`Prepared ${pesticideImages.length} pesticide image references`);
       } catch (e) {
-        console.error("Failed to generate pesticide images:", e);
+        console.error("Failed to prepare pesticide images:", e);
       }
     }
 

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, Bug, CheckCircle, Leaf } from "lucide-react";
+import { AlertCircle, Bug, CheckCircle, Leaf, ExternalLink } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DetectionResultProps {
@@ -15,7 +15,7 @@ interface DetectionResultProps {
     cultural_recommendations?: string;
     chemical_recommendations?: string;
     biological_recommendations?: string;
-    pesticide_images?: string[];
+    pesticide_images?: Array<{ name: string; imageUrl: string; searchUrl: string }>;
   };
   imageUrl: string;
 }
@@ -118,17 +118,36 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
                 
                 {result.pesticide_images && result.pesticide_images.length > 0 && (
                   <div className="mt-4">
-                    <p className="text-xs font-medium text-orange-700 dark:text-orange-400 mb-2">Pesticide Reference Images:</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {result.pesticide_images.map((imgUrl, idx) => (
-                        <img
-                          key={idx}
-                          src={imgUrl}
-                          alt={`Pesticide ${idx + 1}`}
-                          className="w-full h-24 object-cover rounded border border-orange-300 dark:border-orange-700"
-                        />
+                    <p className="text-xs font-medium text-orange-700 dark:text-orange-400 mb-3">Visual Pesticide Recognition:</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {result.pesticide_images.map((pesticideInfo, idx) => (
+                        <div key={idx} className="border border-orange-300 dark:border-orange-700 rounded-lg overflow-hidden bg-white dark:bg-orange-950/10">
+                          <img
+                            src={pesticideInfo.imageUrl}
+                            alt={pesticideInfo.name}
+                            className="w-full h-32 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=300&fit=crop';
+                            }}
+                          />
+                          <div className="p-2">
+                            <p className="text-xs font-semibold text-orange-900 dark:text-orange-100 mb-1">{pesticideInfo.name}</p>
+                            <a
+                              href={pesticideInfo.searchUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              View Real Products
+                            </a>
+                          </div>
+                        </div>
                       ))}
                     </div>
+                    <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 italic">
+                      💡 Click "View Real Products" to see actual product images and verify packaging before purchase.
+                    </p>
                   </div>
                 )}
               </div>
