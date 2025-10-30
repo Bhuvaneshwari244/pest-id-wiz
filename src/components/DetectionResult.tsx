@@ -139,14 +139,14 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
                               className="text-xs text-orange-600 dark:text-orange-400 hover:underline flex items-center gap-1"
                             >
                               <ExternalLink className="w-3 h-3" />
-                              View Real Products
+                              Buy on Amazon
                             </a>
                           </div>
                         </div>
                       ))}
                     </div>
                     <p className="text-xs text-orange-600 dark:text-orange-400 mt-2 italic">
-                      💡 Click "View Real Products" to see actual product images and verify packaging before purchase.
+                      💡 Click "Buy on Amazon" to find and purchase these pesticide products online.
                     </p>
                   </div>
                 )}

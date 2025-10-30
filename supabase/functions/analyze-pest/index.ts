@@ -352,20 +352,18 @@ Only reject if it's clearly NOT related to peanut crops.`
         console.log(`Fetching real images for ${detectionResult.pesticide_names.length} pesticides`);
         
         pesticideImages = detectionResult.pesticide_names.slice(0, 3).map((pesticideName: string) => {
-          // Create direct Google Images search URL for the pesticide product
-          const searchQuery = encodeURIComponent(`${pesticideName} pesticide product bottle`);
-          const googleSearchUrl = `https://www.google.com/search?tbm=isch&q=${searchQuery}`;
+          // Create Amazon search URL for the pesticide product - better for real products
+          const amazonSearchUrl = `https://www.amazon.com/s?k=${encodeURIComponent(pesticideName + ' pesticide')}`;
           
-          // Try to fetch from Unsplash as a generic pesticide image
-          const unsplashQuery = encodeURIComponent("pesticide spray bottle agricultural");
-          const unsplashUrl = `https://source.unsplash.com/800x600/?pesticide,agricultural,spray`;
+          // Use a high-quality generic pesticide bottle image
+          const genericImageUrl = `https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&h=300&fit=crop&q=80`;
           
-          console.log(`Created search URL for ${pesticideName}`);
+          console.log(`Created Amazon product URL for ${pesticideName}`);
           
           return {
             name: pesticideName,
-            imageUrl: unsplashUrl, // Generic pesticide image from Unsplash
-            searchUrl: googleSearchUrl // Direct link to search for specific product
+            imageUrl: genericImageUrl, // Generic pesticide image placeholder
+            searchUrl: amazonSearchUrl // Direct Amazon search to buy product
           };
         });
         
