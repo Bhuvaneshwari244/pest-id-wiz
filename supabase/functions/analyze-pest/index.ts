@@ -12,31 +12,9 @@ serve(async (req) => {
   }
 
   try {
-    // Get authenticated user
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: 'Authentication required' }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user) {
-      console.error("Authentication error:", authError);
-      return new Response(
-        JSON.stringify({ error: 'Invalid authentication' }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    console.log(`✓ Authenticated user: ${user.id}`);
 
     const { image, detectionType = "comprehensive", language = "en" } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
@@ -165,10 +143,9 @@ Only reject if it's clearly NOT related to peanut crops.`
       
       console.log("REJECTING - Not peanut-related. Message:", errorMessage);
       
-      // Store invalid attempts with user_id
+      // Store invalid attempts
       try {
         await supabase.from('detection_history').insert({
-          user_id: user.id,
           detection_type: "not_peanut",
           result_title: "Not Peanut-Related",
           result_description: errorMessage,
@@ -381,9 +358,8 @@ Only reject if it's clearly NOT related to peanut crops.`
     // Combine recommendations for database storage (legacy field)
     const combinedRecommendations = `Cultural: ${detectionResult.cultural_recommendations || 'N/A'}\n\nChemical: ${detectionResult.chemical_recommendations || 'N/A'}\n\nBiological: ${detectionResult.biological_recommendations || 'N/A'}`;
 
-    // Save to database with user_id
+    // Save to database
     const { error: insertError } = await supabase.from('detection_history').insert({
-      user_id: user.id,
       detection_type: detectionResult.detection_type,
       result_title: detectionResult.result_title,
       result_description: detectionResult.result_description,
