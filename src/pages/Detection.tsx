@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Upload, Camera, History, Bug, Leaf, Sparkles, X, Loader2 } from "lucide-react";
@@ -9,7 +8,6 @@ import DetectionResult from "@/components/DetectionResult";
 import DetectionHistory from "@/components/DetectionHistory";
 import Navigation from "@/components/Navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/contexts/AuthContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
@@ -23,19 +21,6 @@ export default function Detection() {
   const [detectionType, setDetectionType] = useState<DetectionType>("damage");
   const { toast } = useToast();
   const { t, language } = useLanguage();
-  const { user, session, loading: authLoading } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to use the detection feature",
-        variant: "destructive",
-      });
-      navigate("/auth");
-    }
-  }, [user, authLoading, navigate, toast]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -50,7 +35,7 @@ export default function Detection() {
   };
 
   const analyzeImage = async () => {
-    if (!image || !session) return;
+    if (!image) return;
 
     setLoading(true);
     try {
@@ -59,9 +44,6 @@ export default function Detection() {
           image,
           detectionType,
           language
-        },
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
         },
       });
 
@@ -91,18 +73,6 @@ export default function Detection() {
       setLoading(false);
     }
   };
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="min-h-screen bg-background">
