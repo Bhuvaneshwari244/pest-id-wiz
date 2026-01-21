@@ -79,7 +79,7 @@ export default function Detection() {
       <Navigation />
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-primary">{t('pestDetection')}</h1>
+          <h1 className="text-4xl font-bold text-primary">{t('diseaseDetection')}</h1>
           <Button
             variant="outline"
             onClick={() => setShowHistory(!showHistory)}
