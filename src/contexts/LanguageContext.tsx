@@ -64,6 +64,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: 'Recommendations',
     scientificName: 'Scientific Name',
     detectionMethod: 'Detection Method',
+    detectionMethodDesc: 'Analyzed using YOLOv8 algorithm with agricultural disease detection model',
+    culturalControl: 'Cultural Control',
+    chemicalControl: 'Chemical Control',
+    biologicalControl: 'Biological Control',
     
     // Abstract Page
     abstractTitle: 'Abstract',
@@ -142,6 +146,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: 'Recomendaciones',
     scientificName: 'Nombre Científico',
     detectionMethod: 'Método de Detección',
+    detectionMethodDesc: 'Analizado usando el algoritmo YOLOv8 con modelo de detección de enfermedades agrícolas',
+    culturalControl: 'Control Cultural',
+    chemicalControl: 'Control Químico',
+    biologicalControl: 'Control Biológico',
     
     // Abstract Page
     abstractTitle: 'Resumen',
@@ -220,6 +228,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: 'సిఫార్సులు',
     scientificName: 'శాస్త్రీయ నామం',
     detectionMethod: 'గుర్తింపు పద్ధతి',
+    detectionMethodDesc: 'వ్యవసాయ వ్యాధి గుర్తింపు మోడల్‌తో YOLOv8 అల్గోరిథమ్ ఉపయోగించి విశ్లేషించబడింది',
+    culturalControl: 'సాంస్కృతిక నియంత్రణ',
+    chemicalControl: 'రసాయన నియంత్రణ',
+    biologicalControl: 'జీవ నియంత్రణ',
     
     // Abstract Page
     abstractTitle: 'సారాంశం',
@@ -298,6 +310,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: '建议',
     scientificName: '学名',
     detectionMethod: '检测方法',
+    detectionMethodDesc: '使用YOLOv8算法和农业病害检测模型进行分析',
+    culturalControl: '农业防治',
+    chemicalControl: '化学防治',
+    biologicalControl: '生物防治',
     
     // Abstract Page
     abstractTitle: '摘要',
@@ -376,6 +392,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: 'Recomendações',
     scientificName: 'Nome Científico',
     detectionMethod: 'Método de Detecção',
+    detectionMethodDesc: 'Analisado usando algoritmo YOLOv8 com modelo de detecção de doenças agrícolas',
+    culturalControl: 'Controle Cultural',
+    chemicalControl: 'Controle Químico',
+    biologicalControl: 'Controle Biológico',
     
     // Abstract Page
     abstractTitle: 'Resumo',
@@ -454,6 +474,10 @@ export const translations: Record<Language, Record<string, string>> = {
     recommendations: 'Shawarwari',
     scientificName: 'Sunan Kimiyya',
     detectionMethod: 'Hanyar Ganowa',
+    detectionMethodDesc: 'An bincika ta amfani da algorithm YOLOv8 tare da samfurin gano cutar noma',
+    culturalControl: 'Kula da Al\'ada',
+    chemicalControl: 'Kula da Sinadarai',
+    biologicalControl: 'Kula da Halitta',
     
     // Abstract Page
     abstractTitle: 'Taƙaitaccen Bayani',
