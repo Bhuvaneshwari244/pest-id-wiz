@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Brain, Zap, Target } from "lucide-react";
+import { ArrowLeft, Brain, Target } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -28,13 +28,6 @@ export default function Technical() {
           <p className="text-muted-foreground mb-4">{t('yoloDesc')}</p>
         </Card>
 
-        <Card className="p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center">
-            <Zap className="w-6 h-6 mr-2 text-primary" />
-            {t('aiProcessing')}
-          </h2>
-          <p className="text-muted-foreground">{t('aiDesc')}</p>
-        </Card>
 
         <Card className="p-8 mb-8">
           <h2 className="text-2xl font-semibold mb-4 flex items-center">
@@ -48,7 +41,6 @@ export default function Technical() {
           <h2 className="text-2xl font-semibold mb-4">{t('technologyStack')}</h2>
           <div className="space-y-2 text-muted-foreground">
             <p>{t('yoloModel')}</p>
-            <p>{t('aiProcessing')}</p>
             <p>{t('cloudInfra')}</p>
           </div>
         </Card>

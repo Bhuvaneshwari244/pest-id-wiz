@@ -10,7 +10,7 @@ export default function Navigation() {
   const navItems = [
     { path: "/", label: t('home') },
     { path: "/abstract", label: t('abstract') },
-    { path: "/detect", label: t('pestDetection') },
+    { path: "/detect", label: t('diseaseDetection') },
     { path: "/technical", label: t('technicalDetails') },
   ];
 
@@ -22,7 +22,7 @@ export default function Navigation() {
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
               <Leaf className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">PeanutGuard AI</span>
+            <span className="text-xl font-bold">PeanutGuard</span>
           </Link>
           
           <div className="flex items-center gap-8">
