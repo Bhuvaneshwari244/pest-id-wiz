@@ -2,7 +2,7 @@ import Navigation from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Upload, Search, FileText, CheckCircle, Play } from "lucide-react";
-import demoVideo from "@/assets/demo-detection.mp4";
+import demoVideo from "@/assets/demo-detection-workflow.mp4";
 
 export default function Abstract() {
   const { t } = useLanguage();
