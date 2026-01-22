@@ -86,6 +86,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: 'Focus on the affected area of the leaf',
     tip3: 'Avoid blurry or low-resolution images',
     tip4: 'Include both healthy and affected parts for comparison',
+    demoVideoTitle: 'See How It Works',
+    demoVideoDesc: 'Watch how easily you can detect peanut diseases with our system',
     
     // Technical Page
     technicalTitle: 'Technical Details',
@@ -182,6 +184,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: 'Enfoque en el área afectada de la hoja',
     tip3: 'Evite imágenes borrosas o de baja resolución',
     tip4: 'Incluya partes sanas y afectadas para comparación',
+    demoVideoTitle: 'Vea Cómo Funciona',
+    demoVideoDesc: 'Observe lo fácil que puede detectar enfermedades del maní con nuestro sistema',
     
     // Technical Page
     technicalTitle: 'Detalles Técnicos',
@@ -278,6 +282,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: 'ఆకు యొక్క ప్రభావిత ప్రాంతంపై దృష్టి పెట్టండి',
     tip3: 'అస్పష్టమైన లేదా తక్కువ రిజల్యూషన్ చిత్రాలను నివారించండి',
     tip4: 'పోలిక కోసం ఆరోగ్యకరమైన మరియు ప్రభావిత భాగాలను చేర్చండి',
+    demoVideoTitle: 'ఇది ఎలా పనిచేస్తుందో చూడండి',
+    demoVideoDesc: 'మా వ్యవస్థతో మీరు వేరుశెనగ వ్యాధులను ఎంత సులభంగా గుర్తించవచ్చో చూడండి',
     
     // Technical Page
     technicalTitle: 'సాంకేతిక వివరాలు',
@@ -374,6 +380,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: '聚焦于叶片的受影响区域',
     tip3: '避免模糊或低分辨率图像',
     tip4: '包括健康和受影响的部分以进行比较',
+    demoVideoTitle: '查看工作原理',
+    demoVideoDesc: '观看如何轻松使用我们的系统检测花生病害',
     
     // Technical Page
     technicalTitle: '技术细节',
@@ -470,6 +478,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: 'Foque na área afetada da folha',
     tip3: 'Evite imagens borradas ou de baixa resolução',
     tip4: 'Inclua partes saudáveis e afetadas para comparação',
+    demoVideoTitle: 'Veja Como Funciona',
+    demoVideoDesc: 'Assista como é fácil detectar doenças do amendoim com nosso sistema',
     
     // Technical Page
     technicalTitle: 'Detalhes Técnicos',
@@ -566,6 +576,8 @@ export const translations: Record<Language, Record<string, string>> = {
     tip2: 'Mai da hankali kan yankin da abin ya shafa na ganyen',
     tip3: 'Guje wa hotuna mara kyau ko masu ƙarancin inganci',
     tip4: 'Haɗa sassan lafiyayyu da waɗanda abin ya shafa don kwatancewa',
+    demoVideoTitle: 'Dubi Yadda Yake Aiki',
+    demoVideoDesc: 'Kalli yadda za ku iya gano cututtukan gyada cikin sauƙi da tsarinmu',
     
     // Technical Page
     technicalTitle: 'Cikakkun Bayanai',

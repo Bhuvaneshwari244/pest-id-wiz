@@ -1,7 +1,8 @@
 import Navigation from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Upload, Search, FileText, CheckCircle } from "lucide-react";
+import { Upload, Search, FileText, CheckCircle, Play } from "lucide-react";
+import demoVideo from "@/assets/demo-detection.mp4";
 
 export default function Abstract() {
   const { t } = useLanguage();
@@ -41,6 +42,25 @@ export default function Abstract() {
             {t('abstractContent')}
           </p>
         </Card>
+
+        {/* Demo Video Section */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <h2 className="text-3xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+            <Play className="w-8 h-8 text-primary" />
+            {t('demoVideoTitle')}
+          </h2>
+          <Card className="overflow-hidden">
+            <video 
+              src={demoVideo}
+              controls
+              className="w-full aspect-video"
+              poster=""
+            >
+              Your browser does not support the video tag.
+            </video>
+          </Card>
+          <p className="text-center text-muted-foreground mt-4">{t('demoVideoDesc')}</p>
+        </div>
 
         {/* How to Use Section */}
         <div className="max-w-4xl mx-auto">
