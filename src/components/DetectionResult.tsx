@@ -35,6 +35,19 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
     }
   };
 
+  const getSeverityLabel = (severity: string) => {
+    switch (severity.toLowerCase()) {
+      case "high":
+        return t("highSeverity");
+      case "medium":
+        return t("mediumSeverity");
+      case "low":
+        return t("lowSeverity");
+      default:
+        return severity;
+    }
+  };
+
   const getSeverityIcon = (severity: string) => {
     switch (severity.toLowerCase()) {
       case "high":
@@ -70,7 +83,7 @@ export default function DetectionResult({ result, imageUrl }: DetectionResultPro
             <h3 className="text-lg font-semibold">{result.result_title}</h3>
             <Badge variant={getSeverityColor(result.severity)} className="flex items-center gap-1">
               {getSeverityIcon(result.severity)}
-              {result.severity}
+              {getSeverityLabel(result.severity)}
             </Badge>
           </div>
           {result.scientific_name && (

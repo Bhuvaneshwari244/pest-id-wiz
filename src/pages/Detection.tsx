@@ -21,53 +21,81 @@ export default function Detection() {
   const [detectionType, setDetectionType] = useState<DetectionType>("damage");
   const { toast } = useToast();
   const { t, language } = useLanguage();
-  const previousLanguageRef = useRef(language);
-  const hasResultRef = useRef(false);
 
-  // Re-analyze when language changes if there's an existing result
-  useEffect(() => {
-    if (previousLanguageRef.current !== language && hasResultRef.current && image && result) {
-      // Language changed and we have a result - re-run analysis
-      reAnalyzeForLanguage();
-    }
-    previousLanguageRef.current = language;
-  }, [language]);
+  // Ensure the UI always shows results in the currently selected language.
+  // If a user changes language after (or during) analysis, re-run analysis and replace the result.
+  const lastRequestedLanguageRef = useRef(language);
+  const analysisRequestIdRef = useRef(0);
 
-  // Track if we have a result
-  useEffect(() => {
-    hasResultRef.current = result !== null && result?.detection_type !== "not_peanut";
-  }, [result]);
-
-  const reAnalyzeForLanguage = async () => {
+  const runAnalysis = async (opts?: { auto?: boolean; languageOverride?: typeof language }) => {
     if (!image) return;
-    
+
+    const requestedLanguage = opts?.languageOverride ?? language;
+    lastRequestedLanguageRef.current = requestedLanguage;
+
+    // If we're auto-retranslating, clear the old result so the user doesn't see stale-language content.
+    if (opts?.auto) {
+      setResult(null);
+    }
+
+    const requestId = ++analysisRequestIdRef.current;
     setLoading(true);
+
     try {
       const { data, error } = await supabase.functions.invoke("analyze-pest", {
-        body: { 
+        body: {
           image,
           detectionType,
-          language
+          language: requestedLanguage,
         },
       });
 
+      if (analysisRequestIdRef.current !== requestId) return; // ignore stale responses
       if (error) throw error;
+
       setResult(data);
-      
-      toast({
-        title: t('detectionComplete'),
-        description: t('analysisSuccess'),
-      });
+
+      if (!opts?.auto) {
+        if (data?.detection_type === "not_peanut") {
+          toast({
+            title: t("invalidImage"),
+            description: data?.result_title,
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: t("detectionComplete"),
+            description: t("analysisSuccess"),
+          });
+        }
+      }
     } catch (error: any) {
+      if (analysisRequestIdRef.current !== requestId) return;
       toast({
-        title: t('errorTitle'),
-        description: error.message,
+        title: t("errorTitle"),
+        description: error?.message ?? String(error),
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      if (analysisRequestIdRef.current === requestId) {
+        setLoading(false);
+      }
     }
   };
+
+  useEffect(() => {
+    if (!image) return;
+
+    // Don't auto-analyze just because user uploaded an image; only re-run if we already have a result
+    // or an analysis is currently running.
+    const hasSomethingToTranslate = Boolean(result) || loading;
+    if (!hasSomethingToTranslate) return;
+
+    if (lastRequestedLanguageRef.current === language) return;
+
+    runAnalysis({ auto: true, languageOverride: language });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language, result]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -82,43 +110,7 @@ export default function Detection() {
   };
 
   const analyzeImage = async () => {
-    if (!image) return;
-
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("analyze-pest", {
-        body: { 
-          image,
-          detectionType,
-          language
-        },
-      });
-
-      if (error) throw error;
-
-      setResult(data);
-      
-      if (data.detection_type === "not_peanut") {
-        toast({
-          title: t('invalidImage'),
-          description: data.result_title,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: t('detectionComplete'),
-          description: t('analysisSuccess'),
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: t('errorTitle'),
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    await runAnalysis({ auto: false });
   };
 
   return (
