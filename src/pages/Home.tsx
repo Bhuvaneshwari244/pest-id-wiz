@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Cpu, TrendingUp, Users, Sparkles } from "lucide-react";
+import { Shield, Cpu, TrendingUp, Users } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -97,7 +97,7 @@ export default function Home() {
       <section className="bg-primary py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <Sparkles className="w-16 h-16 text-primary-foreground mx-auto mb-6" />
+            
             <h2 className="text-4xl font-bold text-primary-foreground mb-6">
               {t('readyToProtect')}
             </h2>
@@ -117,7 +117,7 @@ export default function Home() {
       <footer className="bg-background border-t py-8">
         <div className="container mx-auto px-4">
           <p className="text-center text-muted-foreground">
-            © 2024 PeanutGuard AI
+            © 2024 PeanutGuard
           </p>
         </div>
       </footer>
