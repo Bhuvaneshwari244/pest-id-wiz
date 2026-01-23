@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Upload, Camera, History, Bug, Leaf, Sparkles, X, Loader2 } from "lucide-react";
@@ -21,6 +21,53 @@ export default function Detection() {
   const [detectionType, setDetectionType] = useState<DetectionType>("damage");
   const { toast } = useToast();
   const { t, language } = useLanguage();
+  const previousLanguageRef = useRef(language);
+  const hasResultRef = useRef(false);
+
+  // Re-analyze when language changes if there's an existing result
+  useEffect(() => {
+    if (previousLanguageRef.current !== language && hasResultRef.current && image && result) {
+      // Language changed and we have a result - re-run analysis
+      reAnalyzeForLanguage();
+    }
+    previousLanguageRef.current = language;
+  }, [language]);
+
+  // Track if we have a result
+  useEffect(() => {
+    hasResultRef.current = result !== null && result?.detection_type !== "not_peanut";
+  }, [result]);
+
+  const reAnalyzeForLanguage = async () => {
+    if (!image) return;
+    
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-pest", {
+        body: { 
+          image,
+          detectionType,
+          language
+        },
+      });
+
+      if (error) throw error;
+      setResult(data);
+      
+      toast({
+        title: t('detectionComplete'),
+        description: t('analysisSuccess'),
+      });
+    } catch (error: any) {
+      toast({
+        title: t('errorTitle'),
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
