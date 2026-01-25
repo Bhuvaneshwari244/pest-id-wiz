@@ -2,18 +2,27 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogIn } from "lucide-react";
 import { format } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 export default function DetectionHistory() {
   const [history, setHistory] = useState<any[]>([]);
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    if (user) {
+      fetchHistory();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchHistory = async () => {
     try {
@@ -37,6 +46,18 @@ export default function DetectionHistory() {
       <div className="flex justify-center py-12">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <Card className="p-8 text-center">
+        <LogIn className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+        <p className="text-muted-foreground mb-4">{t('loginToSeeHistory')}</p>
+        <Button onClick={() => navigate('/login')}>
+          {t('login')}
+        </Button>
+      </Card>
     );
   }
 
