@@ -13,7 +13,22 @@ serve(async (req) => {
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    // Get user from auth header
+    const authHeader = req.headers.get("Authorization");
+    let userId: string | null = null;
+    
+    if (authHeader?.startsWith("Bearer ")) {
+      const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } }
+      });
+      const { data: { user } } = await userClient.auth.getUser();
+      userId = user?.id || null;
+    }
+
+    // Use service role for database operations
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { image, detectionType = "comprehensive", language = "en" } = await req.json();
@@ -143,18 +158,21 @@ Only reject if it's clearly NOT related to peanut crops.`
       
       console.log("REJECTING - Not peanut-related. Message:", errorMessage);
       
-      // Store invalid attempts
-      try {
-        await supabase.from('detection_history').insert({
-          detection_type: "not_peanut",
-          result_title: "Not Peanut-Related",
-          result_description: errorMessage,
-          severity: "info",
-          confidence_level: 0,
-          image_url: image.substring(0, 500),
-        });
-      } catch (e) {
-        console.error("Failed to store invalid detection in history:", e);
+      // Store invalid attempts (only if user is logged in)
+      if (userId) {
+        try {
+          await supabase.from('detection_history').insert({
+            detection_type: "not_peanut",
+            result_title: "Not Peanut-Related",
+            result_description: errorMessage,
+            severity: "info",
+            confidence_level: 0,
+            image_url: image.substring(0, 500),
+            user_id: userId,
+          });
+        } catch (e) {
+          console.error("Failed to store invalid detection in history:", e);
+        }
       }
 
       return new Response(
@@ -358,20 +376,23 @@ Only reject if it's clearly NOT related to peanut crops.`
     // Combine recommendations for database storage (legacy field)
     const combinedRecommendations = `Cultural: ${detectionResult.cultural_recommendations || 'N/A'}\n\nChemical: ${detectionResult.chemical_recommendations || 'N/A'}\n\nBiological: ${detectionResult.biological_recommendations || 'N/A'}`;
 
-    // Save to database
-    const { error: insertError } = await supabase.from('detection_history').insert({
-      detection_type: detectionResult.detection_type,
-      result_title: detectionResult.result_title,
-      result_description: detectionResult.result_description,
-      scientific_name: detectionResult.scientific_name,
-      severity: detectionResult.severity,
-      confidence_level: detectionResult.confidence_level,
-      recommendations: combinedRecommendations,
-      image_url: image.substring(0, 500),
-    });
+    // Save to database (only if user is logged in)
+    if (userId) {
+      const { error: insertError } = await supabase.from('detection_history').insert({
+        detection_type: detectionResult.detection_type,
+        result_title: detectionResult.result_title,
+        result_description: detectionResult.result_description,
+        scientific_name: detectionResult.scientific_name,
+        severity: detectionResult.severity,
+        confidence_level: detectionResult.confidence_level,
+        recommendations: combinedRecommendations,
+        image_url: image.substring(0, 500),
+        user_id: userId,
+      });
 
-    if (insertError) {
-      console.error("Failed to insert detection history:", insertError);
+      if (insertError) {
+        console.error("Failed to insert detection history:", insertError);
+      }
     }
 
     return new Response(
