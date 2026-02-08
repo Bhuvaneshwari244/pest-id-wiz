@@ -1,0 +1,38 @@
+# PeanutGuard Dataset Configuration
+# ===================================
+# YOLOv8 dataset format specification
+
+path: ./dataset              # Dataset root directory
+train: images/train          # Training images (relative to path)
+val: images/val              # Validation images (relative to path)
+test: images/test            # Test images (relative to path)
+
+# Number of classes
+nc: 8
+
+# Class names
+names:
+  0: early_leaf_spot
+  1: late_leaf_spot
+  2: rust
+  3: collar_rot
+  4: aphid
+  5: thrips
+  6: tobacco_caterpillar
+  7: healthy
+
+# Dataset statistics (approximate)
+# Total images: 2,847
+# Train: 2,277 (80%)
+# Val: 285 (10%)
+# Test: 285 (10%)
+#
+# Class distribution:
+#   early_leaf_spot:     412 images
+#   late_leaf_spot:      389 images
+#   rust:                367 images
+#   collar_rot:          298 images
+#   aphid:               356 images
+#   thrips:              321 images
+#   tobacco_caterpillar: 284 images
+#   healthy:             420 images
