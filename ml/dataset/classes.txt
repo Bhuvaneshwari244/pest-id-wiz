@@ -1,0 +1,8 @@
+early_leaf_spot
+late_leaf_spot
+rust
+collar_rot
+aphid
+thrips
+tobacco_caterpillar
+healthy

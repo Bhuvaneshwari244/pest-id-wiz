@@ -1,0 +1,36 @@
+# PeanutGuard YOLOv8 Training Configuration
+# ==========================================
+
+model:
+  architecture: yolov8n     # YOLOv8 nano - optimized for edge/mobile deployment
+  pretrained: true          # Start from COCO pretrained weights
+  input_size: 640           # Input image resolution
+  num_classes: 8            # Number of detection classes
+
+training:
+  epochs: 100
+  batch_size: 16
+  learning_rate: 0.01
+  optimizer: SGD
+  momentum: 0.937
+  weight_decay: 0.0005
+  warmup_epochs: 3
+  patience: 20              # Early stopping patience
+
+augmentation:
+  hsv_h: 0.015             # HSV-Hue augmentation
+  hsv_s: 0.7               # HSV-Saturation augmentation
+  hsv_v: 0.4               # HSV-Value augmentation
+  degrees: 10.0            # Rotation (+/- degrees)
+  translate: 0.1            # Translation (+/- fraction)
+  scale: 0.5               # Scale (+/- gain)
+  fliplr: 0.5              # Horizontal flip probability
+  flipud: 0.0              # Vertical flip probability
+  mosaic: 1.0              # Mosaic augmentation probability
+  mixup: 0.1               # MixUp augmentation probability
+
+dataset:
+  path: dataset/data.yaml
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
