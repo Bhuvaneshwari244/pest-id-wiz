@@ -8,7 +8,7 @@ import Navigation from "@/components/Navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { runMockDetection, type DetectionResult as DetectionResultType } from "@/lib/mockDetection";
+import { analyzeImage, type DetectionResult as DetectionResultType } from "@/lib/mockDetection";
 
 type DetectionType = "insect" | "damage" | "comprehensive";
 
@@ -32,16 +32,13 @@ export default function Detection() {
     }
   };
 
-  const analyzeImage = async () => {
+  const handleAnalyze = async () => {
     if (!image) return;
 
     setLoading(true);
-    
-    // Simulate model inference delay (500-1500ms)
-    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
 
     try {
-      const detectionResult = runMockDetection(detectionType);
+      const detectionResult = await analyzeImage(image, detectionType);
       setResult(detectionResult);
 
       if (detectionResult.detection_type === "not_peanut") {
@@ -170,7 +167,7 @@ export default function Detection() {
               </RadioGroup>
 
               <Button 
-                onClick={analyzeImage} 
+                onClick={handleAnalyze} 
                 disabled={loading || !image} 
                 className="w-full mt-6"
                 size="lg"
