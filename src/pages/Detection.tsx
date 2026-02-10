@@ -8,7 +8,21 @@ import Navigation from "@/components/Navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { analyzeImage, type DetectionResult as DetectionResultType } from "@/lib/mockDetection";
+import { supabase } from "@/integrations/supabase/client";
+import { useLanguage as useLanguageCtx } from "@/contexts/LanguageContext";
+
+interface DetectionResultType {
+  detection_type: string;
+  result_title: string;
+  result_description: string;
+  scientific_name?: string;
+  severity: string;
+  confidence_level: number;
+  cultural_recommendations?: string;
+  chemical_recommendations?: string;
+  biological_recommendations?: string;
+  pesticide_images?: Array<{ name: string; imageUrl: string; searchUrl: string }>;
+}
 
 type DetectionType = "insect" | "damage" | "comprehensive";
 
@@ -18,7 +32,7 @@ export default function Detection() {
   const [result, setResult] = useState<DetectionResultType | null>(null);
   const [detectionType, setDetectionType] = useState<DetectionType>("damage");
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,7 +52,12 @@ export default function Detection() {
     setLoading(true);
 
     try {
-      const detectionResult = await analyzeImage(image, detectionType);
+      const { data, error } = await supabase.functions.invoke('analyze-pest', {
+        body: { image, detectionType, language },
+      });
+
+      if (error) throw new Error(error.message || 'Analysis failed');
+      const detectionResult = data as DetectionResultType;
       setResult(detectionResult);
 
       if (detectionResult.detection_type === "not_peanut") {
