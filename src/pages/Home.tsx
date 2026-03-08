@@ -25,7 +25,7 @@ export default function Home() {
 
       {/* Hero Section with crop background */}
       <section className="relative overflow-hidden min-h-[85vh] flex items-center">
-        <div className="absolute inset-0 bg-background/60" />
+        <div className="absolute inset-0 bg-background/30" />
 
         <div className="container mx-auto px-4 relative z-10 py-20">
           <div className="max-w-3xl mx-auto text-center">
