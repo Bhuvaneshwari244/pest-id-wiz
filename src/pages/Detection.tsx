@@ -9,7 +9,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage as useLanguageCtx } from "@/contexts/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
+import FloatingLeaves from "@/components/FloatingLeaves";
 
 interface DetectionResultType {
   detection_type: string;
@@ -48,158 +49,144 @@ export default function Detection() {
 
   const handleAnalyze = async () => {
     if (!image) return;
-
     setLoading(true);
-
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-pest', {
+      const { data, error } = await supabase.functions.invoke("analyze-pest", {
         body: { image, detectionType, language },
       });
-
-      if (error) throw new Error(error.message || 'Analysis failed');
+      if (error) throw new Error(error.message || "Analysis failed");
       const detectionResult = data as DetectionResultType;
       setResult(detectionResult);
-
       if (detectionResult.detection_type === "not_peanut") {
-        toast({
-          title: t("invalidImage"),
-          description: detectionResult.result_title,
-          variant: "destructive",
-        });
+        toast({ title: t("invalidImage"), description: detectionResult.result_title, variant: "destructive" });
       } else {
-        toast({
-          title: t("detectionComplete"),
-          description: t("analysisSuccess"),
-        });
+        toast({ title: t("detectionComplete"), description: t("analysisSuccess") });
       }
     } catch (error: any) {
-      toast({
-        title: t("errorTitle"),
-        description: error?.message ?? String(error),
-        variant: "destructive",
-      });
+      toast({ title: t("errorTitle"), description: error?.message ?? String(error), variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
+  const detectionOptions = [
+    { value: "insect", icon: Bug, color: "text-primary", titleKey: "insectIdentification", descKey: "insectDesc" },
+    { value: "damage", icon: Leaf, color: "text-primary", titleKey: "damageSymptom", descKey: "damageDesc" },
+    { value: "comprehensive", icon: Sparkles, color: "text-primary", titleKey: "comprehensive", descKey: "comprehensiveDesc" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <FloatingLeaves />
       <Navigation />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary">{t('diseaseDetection')}</h1>
-        </div>
 
+      {/* Header */}
+      <div className="bg-primary/5 border-b py-10 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23228B22' fill-opacity='1'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="container mx-auto px-4 relative z-10"
+        >
+          <h1 className="text-4xl font-bold text-primary">{t("diseaseDetection")}</h1>
+        </motion.div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 relative z-10">
         <div className="grid lg:grid-cols-[1fr,400px] gap-6">
-          {/* Left side - Image upload */}
-          <div className="relative">
-            {!image ? (
-              <div className="border-2 border-dashed border-border rounded-lg p-12 text-center h-[500px] flex flex-col items-center justify-center">
-                <Upload className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground mb-4">
-                  {t('uploadDesc')}
-                </p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                  id="file-upload"
-                />
-                <label htmlFor="file-upload">
-                  <Button asChild>
-                    <span>
-                      <Camera className="mr-2 w-4 h-4" />
-                      {t('chooseImage')}
-                    </span>
-                  </Button>
-                </label>
-              </div>
-            ) : (
-              <div className="relative">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  className="absolute top-2 right-2 z-10 rounded-full"
-                  onClick={() => {
-                    setImage(null);
-                    setResult(null);
-                  }}
+          {/* Left - Image upload */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            <AnimatePresence mode="wait">
+              {!image ? (
+                <motion.div
+                  key="upload"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="border-2 border-dashed border-border rounded-xl p-12 text-center h-[500px] flex flex-col items-center justify-center bg-card/50 backdrop-blur-sm hover:border-primary/50 transition-colors duration-300"
                 >
-                  <X className="w-4 h-4" />
-                </Button>
-                <img
-                  src={image}
-                  alt="Uploaded"
-                  className="w-full rounded-lg"
-                />
-              </div>
-            )}
+                  <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+                    <Upload className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                  </motion.div>
+                  <p className="text-muted-foreground mb-4">{t("uploadDesc")}</p>
+                  <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" id="file-upload" />
+                  <label htmlFor="file-upload">
+                    <Button asChild className="shadow-md hover:shadow-lg transition-shadow">
+                      <span>
+                        <Camera className="mr-2 w-4 h-4" />
+                        {t("chooseImage")}
+                      </span>
+                    </Button>
+                  </label>
+                </motion.div>
+              ) : (
+                <motion.div key="preview" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative">
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute top-2 right-2 z-10 rounded-full shadow-lg"
+                    onClick={() => { setImage(null); setResult(null); }}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                  <img src={image} alt="Uploaded" className="w-full rounded-xl shadow-md" />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {result && (
-              <div className="mt-6">
-                <DetectionResult result={result} imageUrl={image!} />
-              </div>
-            )}
-          </div>
+            <AnimatePresence>
+              {result && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="mt-6"
+                >
+                  <DetectionResult result={result} imageUrl={image!} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
-          {/* Right side - Detection controls */}
-          <div className="space-y-6">
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">{t('detectionType')}</h2>
+          {/* Right - Controls */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="space-y-6">
+            <Card className="p-6 shadow-md bg-card/80 backdrop-blur-sm">
+              <h2 className="text-xl font-semibold mb-4">{t("detectionType")}</h2>
               <RadioGroup value={detectionType} onValueChange={(v) => setDetectionType(v as DetectionType)}>
                 <div className="space-y-4">
-                  <div className="flex items-start space-x-3 p-4 rounded-lg border hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="insect" id="insect" />
-                    <Label htmlFor="insect" className="cursor-pointer flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Bug className="w-5 h-5 text-primary" />
-                        <span className="font-medium">{t('insectIdentification')}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{t('insectDesc')}</p>
-                    </Label>
-                  </div>
-
-                  <div className="flex items-start space-x-3 p-4 rounded-lg border hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="damage" id="damage" />
-                    <Label htmlFor="damage" className="cursor-pointer flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Leaf className="w-5 h-5 text-green-600" />
-                        <span className="font-medium">{t('damageSymptom')}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{t('damageDesc')}</p>
-                    </Label>
-                  </div>
-
-                  <div className="flex items-start space-x-3 p-4 rounded-lg border hover:bg-accent/50 cursor-pointer">
-                    <RadioGroupItem value="comprehensive" id="comprehensive" />
-                    <Label htmlFor="comprehensive" className="cursor-pointer flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Sparkles className="w-5 h-5 text-primary" />
-                        <span className="font-medium">{t('comprehensive')}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{t('comprehensiveDesc')}</p>
-                    </Label>
-                  </div>
+                  {detectionOptions.map((opt) => (
+                    <motion.div
+                      key={opt.value}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      className={`flex items-start space-x-3 p-4 rounded-xl border cursor-pointer transition-colors duration-200 ${
+                        detectionType === opt.value ? "border-primary bg-primary/5" : "hover:bg-accent/50"
+                      }`}
+                    >
+                      <RadioGroupItem value={opt.value} id={opt.value} />
+                      <Label htmlFor={opt.value} className="cursor-pointer flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <opt.icon className={`w-5 h-5 ${opt.color}`} />
+                          <span className="font-medium">{t(opt.titleKey)}</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{t(opt.descKey)}</p>
+                      </Label>
+                    </motion.div>
+                  ))}
                 </div>
               </RadioGroup>
 
-              <Button 
-                onClick={handleAnalyze} 
-                disabled={loading || !image} 
-                className="w-full mt-6"
-                size="lg"
-              >
-                {loading ? (
-                  <Loader2 className="mr-2 w-4 h-4 animate-spin" />
-                ) : (
-                  <Sparkles className="mr-2 w-4 h-4" />
-                )}
-                {loading ? t('analyzing') : t('analyzeImage')}
-              </Button>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Button onClick={handleAnalyze} disabled={loading || !image} className="w-full mt-6 shadow-md" size="lg">
+                  {loading ? <Loader2 className="mr-2 w-4 h-4 animate-spin" /> : <Sparkles className="mr-2 w-4 h-4" />}
+                  {loading ? t("analyzing") : t("analyzeImage")}
+                </Button>
+              </motion.div>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
