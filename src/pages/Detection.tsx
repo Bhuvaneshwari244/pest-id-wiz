@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import FloatingLeaves from "@/components/FloatingLeaves";
-import heroBg from "@/assets/hero-crop-bg.jpg";
+
 
 interface DetectionResultType {
   detection_type: string;

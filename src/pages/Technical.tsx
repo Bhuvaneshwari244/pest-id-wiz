@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingLeaves from "@/components/FloatingLeaves";
-import heroBg from "@/assets/hero-crop-bg.jpg";
+
 import TechSystemOverview from "@/components/technical/TechSystemOverview";
 import TechModelArchitecture from "@/components/technical/TechModelArchitecture";
 import TechTrainingConfig from "@/components/technical/TechTrainingConfig";
