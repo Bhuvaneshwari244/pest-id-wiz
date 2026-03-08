@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingLeaves from "@/components/FloatingLeaves";
 import demoVideo from "@/assets/demo-detection-workflow.mp4";
-import heroBg from "@/assets/hero-crop-bg.jpg";
+
 
 export default function Abstract() {
   const { t } = useLanguage();
@@ -24,11 +24,7 @@ export default function Abstract() {
       <Navigation />
 
       {/* Header banner */}
-      <div className="border-b py-16 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(142,76%,20%)/0.92] via-[hsl(142,76%,25%)/0.85] to-[hsl(142,76%,30%)/0.75]" />
-        </div>
+      <div className="border-b py-16 relative overflow-hidden bg-gradient-to-br from-[hsl(142,76%,28%)] via-[hsl(142,70%,34%)] to-[hsl(142,60%,40%)]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
