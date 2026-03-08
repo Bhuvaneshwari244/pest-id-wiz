@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingLeaves from "@/components/FloatingLeaves";
 import demoVideo from "@/assets/demo-detection-workflow.mp4";
+import heroBg from "@/assets/hero-crop-bg.jpg";
 
 export default function Abstract() {
   const { t } = useLanguage();
@@ -23,18 +24,19 @@ export default function Abstract() {
       <Navigation />
 
       {/* Header banner */}
-      <div className="bg-primary/5 border-b py-16 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23228B22' fill-opacity='1'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
+      <div className="border-b py-16 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <img src={heroBg} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(142,76%,20%)/0.92] via-[hsl(142,76%,25%)/0.85] to-[hsl(142,76%,30%)/0.75]" />
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="container mx-auto px-4 text-center relative z-10"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("abstractTitle")}</h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">{t("abstractTitle")}</h1>
+          <p className="text-white/90 text-lg max-w-2xl mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
             Understanding PeanutGuard's approach to crop protection
           </p>
         </motion.div>
