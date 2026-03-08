@@ -1,44 +1,61 @@
 import { motion } from "framer-motion";
 
-const leaves = [
-  { x: "5%", y: "-10%", size: 24, delay: 0, duration: 18, rotate: 360 },
-  { x: "15%", y: "-15%", size: 18, delay: 2, duration: 22, rotate: -360 },
-  { x: "25%", y: "-5%", size: 20, delay: 4, duration: 20, rotate: 270 },
-  { x: "40%", y: "-12%", size: 16, delay: 1, duration: 25, rotate: -270 },
-  { x: "55%", y: "-8%", size: 22, delay: 3, duration: 19, rotate: 360 },
-  { x: "70%", y: "-14%", size: 14, delay: 5, duration: 23, rotate: -360 },
-  { x: "80%", y: "-6%", size: 20, delay: 2.5, duration: 21, rotate: 300 },
-  { x: "90%", y: "-10%", size: 16, delay: 0.5, duration: 24, rotate: -300 },
+const floatingObjects = [
+  // Leaves
+  { emoji: "🍃", x: "3%", y: "5%", size: 28, delay: 0, duration: 20, rotate: 360 },
+  { emoji: "🌿", x: "92%", y: "15%", size: 24, delay: 3, duration: 25, rotate: -200 },
+  { emoji: "🍀", x: "85%", y: "60%", size: 20, delay: 7, duration: 22, rotate: 300 },
+  { emoji: "🍃", x: "10%", y: "75%", size: 22, delay: 1.5, duration: 18, rotate: -360 },
+  // Flowers
+  { emoji: "🌸", x: "20%", y: "10%", size: 22, delay: 2, duration: 24, rotate: 180 },
+  { emoji: "🌻", x: "75%", y: "8%", size: 26, delay: 4, duration: 20, rotate: -180 },
+  { emoji: "🌺", x: "50%", y: "85%", size: 20, delay: 6, duration: 26, rotate: 270 },
+  { emoji: "💐", x: "88%", y: "40%", size: 18, delay: 1, duration: 22, rotate: -150 },
+  // Fruits & Vegetables
+  { emoji: "🥜", x: "15%", y: "30%", size: 24, delay: 5, duration: 19, rotate: 360 },
+  { emoji: "🥕", x: "80%", y: "25%", size: 22, delay: 0.5, duration: 23, rotate: -270 },
+  { emoji: "🌽", x: "45%", y: "3%", size: 26, delay: 3.5, duration: 21, rotate: 200 },
+  { emoji: "🍅", x: "60%", y: "70%", size: 20, delay: 8, duration: 24, rotate: -360 },
+  { emoji: "🫘", x: "30%", y: "55%", size: 18, delay: 2.5, duration: 20, rotate: 300 },
+  { emoji: "🍊", x: "70%", y: "45%", size: 22, delay: 6.5, duration: 22, rotate: -200 },
+  // Small dots / accents
+  { emoji: "🟢", x: "25%", y: "40%", size: 8, delay: 0, duration: 15, rotate: 0 },
+  { emoji: "🟡", x: "55%", y: "20%", size: 6, delay: 4, duration: 18, rotate: 0 },
+  { emoji: "🟠", x: "40%", y: "65%", size: 7, delay: 2, duration: 16, rotate: 0 },
+  { emoji: "🟢", x: "65%", y: "90%", size: 8, delay: 5, duration: 14, rotate: 0 },
+  // More scattered items
+  { emoji: "🌱", x: "5%", y: "50%", size: 20, delay: 3, duration: 26, rotate: 180 },
+  { emoji: "🥬", x: "95%", y: "70%", size: 22, delay: 7.5, duration: 20, rotate: -300 },
+  { emoji: "🌾", x: "35%", y: "90%", size: 24, delay: 1, duration: 24, rotate: 270 },
+  { emoji: "🥭", x: "48%", y: "45%", size: 20, delay: 9, duration: 22, rotate: -180 },
 ];
 
 export default function FloatingLeaves() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-      {leaves.map((leaf, i) => (
+      {floatingObjects.map((obj, i) => (
         <motion.div
           key={i}
-          className="absolute text-primary/10"
-          style={{ left: leaf.x, top: leaf.y }}
+          className="absolute select-none"
+          style={{
+            left: obj.x,
+            top: obj.y,
+            fontSize: obj.size,
+            opacity: obj.size <= 10 ? 0.5 : 0.15,
+          }}
           animate={{
-            y: ["0vh", "110vh"],
-            rotate: [0, leaf.rotate],
-            x: [0, Math.sin(i) * 60],
+            y: [0, -20, 0, 20, 0],
+            x: [0, Math.sin(i * 0.7) * 30, 0, Math.cos(i * 0.5) * -30, 0],
+            rotate: [0, obj.rotate / 4, 0, -obj.rotate / 4, 0],
           }}
           transition={{
-            duration: leaf.duration,
-            delay: leaf.delay,
+            duration: obj.duration,
+            delay: obj.delay,
             repeat: Infinity,
-            ease: "linear",
+            ease: "easeInOut",
           }}
         >
-          <svg
-            width={leaf.size}
-            height={leaf.size}
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M17 8C8 10 5.9 16.17 3.82 21.34l1.89.66.95-2.3c.48.17.98.3 1.34.3C19 20 22 3 22 3c-1 2-8 2.25-13 3.25S2 11.5 2 13.5s1.75 3.75 1.75 3.75C7 8 17 8 17 8z" />
-          </svg>
+          {obj.emoji}
         </motion.div>
       ))}
     </div>
