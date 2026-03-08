@@ -25,16 +25,8 @@ export default function Home() {
 
       {/* Hero Section with crop background */}
       <section className="relative overflow-hidden min-h-[85vh] flex items-center">
-        {/* Background image */}
-        <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[hsl(142,76%,20%)/0.92] via-[hsl(142,76%,25%)/0.85] to-[hsl(142,76%,30%)/0.75]" />
-        </div>
-
-        {/* Animated grain overlay */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
-        }} />
+        {/* Green gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(142,76%,28%)] via-[hsl(142,70%,34%)] to-[hsl(142,60%,40%)]" />
 
         <div className="container mx-auto px-4 relative z-10 py-20">
           <div className="max-w-3xl mx-auto text-center">
@@ -131,10 +123,7 @@ export default function Home() {
 
       {/* CTA Section with crop bg */}
       <section className="relative overflow-hidden py-28 z-10">
-        <div className="absolute inset-0">
-          <img src={heroBg} alt="" className="w-full h-full object-cover" style={{ objectPosition: "center 70%" }} />
-          <div className="absolute inset-0 bg-[hsl(142,76%,22%)/0.88]" />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(142,76%,22%)] via-[hsl(142,70%,28%)] to-[hsl(142,60%,34%)]" />
         <div className="container mx-auto px-4 relative">
           <AnimatedSection className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-white mb-6">{t("readyToProtect")}</h2>
