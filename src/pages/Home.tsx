@@ -38,9 +38,7 @@ export default function Home() {
         }} />
 
         <div className="container mx-auto px-4 relative z-10 py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left — Text */}
-            <div>
+          <div className="max-w-3xl mx-auto text-center">
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -63,7 +61,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg text-white/65 mb-10 max-w-lg"
+                className="text-lg text-white/65 mb-10 max-w-lg mx-auto"
               >
                 {t("easyDesc")}
               </motion.p>
