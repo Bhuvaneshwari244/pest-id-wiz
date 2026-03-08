@@ -43,7 +43,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
               >
                 {t("heroTitle")}
               </motion.h1>
@@ -52,7 +52,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-xl text-white/85 mb-4"
+                className="text-xl text-yellow-200 mb-4 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)] font-medium"
               >
                 {t("heroSubtitle")}
               </motion.p>
@@ -61,7 +61,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg text-white/65 mb-10 max-w-lg mx-auto"
+                className="text-lg text-white mb-10 max-w-lg mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]"
               >
                 {t("easyDesc")}
               </motion.p>
