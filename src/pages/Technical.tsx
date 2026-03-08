@@ -8,7 +8,6 @@ import TechModelArchitecture from "@/components/technical/TechModelArchitecture"
 import TechTrainingConfig from "@/components/technical/TechTrainingConfig";
 import TechDatasetDetails from "@/components/technical/TechDatasetDetails";
 import TechPerformancePipeline from "@/components/technical/TechPerformancePipeline";
-import TechStackFeatures from "@/components/technical/TechStackFeatures";
 import TechOutputRequirements from "@/components/technical/TechOutputRequirements";
 
 export default function Technical() {
@@ -34,7 +33,6 @@ export default function Technical() {
         <TechTrainingConfig />
         <TechDatasetDetails />
         <TechPerformancePipeline />
-        <TechStackFeatures />
         <TechOutputRequirements />
       </div>
     </div>
