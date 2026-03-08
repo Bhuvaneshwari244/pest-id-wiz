@@ -50,7 +50,7 @@ export default function FloatingLeaves() {
             left: obj.x,
             top: obj.y,
             fontSize: obj.size,
-            opacity: obj.size <= 10 ? 0.6 : 0.55,
+            opacity: obj.size <= 10 ? 0.75 : 0.7,
           }}
           animate={{
             y: [0, -20, 0, 20, 0],
