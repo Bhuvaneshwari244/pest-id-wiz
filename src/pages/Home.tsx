@@ -6,7 +6,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
 import FloatingLeaves from "@/components/FloatingLeaves";
-import heroBg from "@/assets/hero-crop-bg.jpg";
 
 
 export default function Home() {
