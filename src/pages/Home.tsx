@@ -41,16 +41,6 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left — Text */}
             <div>
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-5 py-2 mb-8"
-              >
-                <Leaf className="w-4 h-4 text-white" />
-                <span className="text-sm font-medium text-white">PeanutGuard v2.0</span>
-              </motion.div>
-
               <motion.h1
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -102,44 +92,6 @@ export default function Home() {
               </motion.div>
             </div>
 
-            {/* Right — Floating leaf card */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: 3 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring" }}
-              className="hidden lg:block"
-            >
-              <div className="relative">
-                {/* Glowing ring */}
-                <div className="absolute -inset-4 bg-white/10 rounded-3xl blur-xl" />
-                <div className="relative bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-6 shadow-2xl">
-                  <img
-                    src={peanutLeaves}
-                    alt="Peanut crop leaves"
-                    className="w-full h-64 object-cover rounded-xl mb-4"
-                  />
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      { value: "94.1%", label: "Accuracy" },
-                      { value: "<100ms", label: "Speed" },
-                      { value: "60", label: "Classes" },
-                      { value: "10,847", label: "Images" },
-                    ].map((stat, i) => (
-                      <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 + i * 0.1 }}
-                        className="bg-white/10 rounded-lg p-3 text-center"
-                      >
-                        <p className="text-xl font-bold text-white">{stat.value}</p>
-                        <p className="text-xs text-white/60">{stat.label}</p>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
         </div>
 
