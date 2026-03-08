@@ -94,8 +94,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: 'Technology Stack',
     yoloModel: 'YOLOv8 Model',
     yoloDesc: 'State-of-the-art object detection for disease identification',
-    cloudInfra: 'Cloud Infrastructure',
-    cloudDesc: 'Scalable backend for real-time processing',
+    cloudInfra: 'Image Processing Pipeline',
+    cloudDesc: 'Efficient processing engine for real-time disease detection',
 
     // Common/Toasts
     invalidImage: 'Invalid Image',
@@ -213,8 +213,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: 'Stack Tecnológico',
     yoloModel: 'Modelo YOLOv8',
     yoloDesc: 'Detección de objetos de última generación para identificación de enfermedades',
-    cloudInfra: 'Infraestructura en la Nube',
-    cloudDesc: 'Backend escalable para procesamiento en tiempo real',
+    cloudInfra: 'Pipeline de Procesamiento de Imágenes',
+    cloudDesc: 'Motor de procesamiento eficiente para detección de enfermedades en tiempo real',
 
     // Common/Toasts
     invalidImage: 'Imagen inválida',
@@ -332,8 +332,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: 'సాంకేతిక స్టాక్',
     yoloModel: 'YOLOv8 మోడల్',
     yoloDesc: 'వ్యాధి గుర్తింపు కోసం అత్యాధునిక వస్తువు గుర్తింపు',
-    cloudInfra: 'క్లౌడ్ మౌలిక సదుపాయం',
-    cloudDesc: 'నిజ-సమయ ప్రాసెసింగ్ కోసం స్కేలబుల్ బ్యాకెండ్',
+    cloudInfra: 'ఇమేజ్ ప్రాసెసింగ్ పైప్‌లైన్',
+    cloudDesc: 'నిజ-సమయ వ్యాధి గుర్తింపు కోసం సమర్థవంతమైన ప్రాసెసింగ్ ఇంజిన్',
 
     // Common/Toasts
     invalidImage: 'చెల్లని చిత్రం',
@@ -451,8 +451,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: '技术栈',
     yoloModel: 'YOLOv8模型',
     yoloDesc: '用于病害识别的最先进的物体检测',
-    cloudInfra: '云基础设施',
-    cloudDesc: '用于实时处理的可扩展后端',
+    cloudInfra: '图像处理管道',
+    cloudDesc: '用于实时病害检测的高效处理引擎',
 
     // Common/Toasts
     invalidImage: '无效的图片',
@@ -570,8 +570,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: 'Stack de Tecnologia',
     yoloModel: 'Modelo YOLOv8',
     yoloDesc: 'Detecção de objetos de última geração para identificação de doenças',
-    cloudInfra: 'Infraestrutura em Nuvem',
-    cloudDesc: 'Backend escalável para processamento em tempo real',
+    cloudInfra: 'Pipeline de Processamento de Imagens',
+    cloudDesc: 'Motor de processamento eficiente para detecção de doenças em tempo real',
 
     // Common/Toasts
     invalidImage: 'Imagem inválida',
@@ -689,8 +689,8 @@ export const translations: Record<Language, Record<string, string>> = {
     technologyStack: 'Tsarin Fasaha',
     yoloModel: 'Samfurin YOLOv8',
     yoloDesc: 'Gano abubuwa na zamani don gano cuta',
-    cloudInfra: 'Tushen Gajimare',
-    cloudDesc: 'Backend mai ƙarfi don sarrafa lokaci-lokaci',
+    cloudInfra: 'Hanyar Sarrafa Hoto',
+    cloudDesc: 'Injin sarrafa mai inganci don gano cuta a lokaci-lokaci',
 
     // Common/Toasts
     invalidImage: 'Hoto mara inganci',
