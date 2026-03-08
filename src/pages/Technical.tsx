@@ -32,7 +32,7 @@ export default function Technical() {
       <Navigation />
 
       {/* Header */}
-      <div className="border-b py-12 relative overflow-hidden bg-gradient-to-br from-[hsl(142,76%,28%)] via-[hsl(142,70%,34%)] to-[hsl(142,60%,40%)]">
+      <div className="border-b py-12 relative overflow-hidden bg-background">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -45,8 +45,8 @@ export default function Technical() {
               {t("home")}
             </Button>
           </Link>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">Technical Details</h1>
-          <p className="text-white/90 text-lg drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">Technical Details</h1>
+          <p className="text-muted-foreground text-lg">
             Complete technical documentation of the Peanut Disease Detection System using ensemble machine learning approach.
           </p>
         </motion.div>

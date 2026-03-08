@@ -25,8 +25,7 @@ export default function Home() {
 
       {/* Hero Section with crop background */}
       <section className="relative overflow-hidden min-h-[85vh] flex items-center">
-        {/* Green gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(142,76%,28%)] via-[hsl(142,70%,34%)] to-[hsl(142,60%,40%)]" />
+        <div className="absolute inset-0 bg-background" />
 
         <div className="container mx-auto px-4 relative z-10 py-20">
           <div className="max-w-3xl mx-auto text-center">
@@ -34,7 +33,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.1 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight"
               >
                 {t("heroTitle")}
               </motion.h1>
@@ -43,7 +42,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-xl text-yellow-200 mb-4 drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)] font-medium"
+                className="text-xl text-primary mb-4 font-medium"
               >
                 {t("heroSubtitle")}
               </motion.p>
@@ -52,7 +51,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="text-lg text-white mb-10 max-w-lg mx-auto drop-shadow-[0_1px_4px_rgba(0,0,0,0.3)]"
+                className="text-lg text-muted-foreground mb-10 max-w-lg mx-auto"
               >
                 {t("easyDesc")}
               </motion.p>
@@ -64,7 +63,7 @@ export default function Home() {
                 className="flex flex-wrap items-center justify-center gap-4"
               >
                 <Link to="/detect">
-                  <Button size="lg" variant="secondary" className="text-lg px-8 group shadow-xl hover:shadow-2xl transition-all duration-300">
+                  <Button size="lg" className="text-lg px-8 group shadow-xl hover:shadow-2xl transition-all duration-300">
                     {t("getStarted")}
                     <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
@@ -73,7 +72,7 @@ export default function Home() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="text-lg px-8 bg-white/10 backdrop-blur-sm border-2 border-white/40 text-white hover:bg-white hover:text-primary transition-all duration-300"
+                    className="text-lg px-8 transition-all duration-300"
                   >
                     {t("learnMore")}
                   </Button>
@@ -123,13 +122,13 @@ export default function Home() {
 
       {/* CTA Section with crop bg */}
       <section className="relative overflow-hidden py-28 z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(142,76%,22%)] via-[hsl(142,70%,28%)] to-[hsl(142,60%,34%)]" />
+        <div className="absolute inset-0 bg-muted/50" />
         <div className="container mx-auto px-4 relative">
           <AnimatedSection className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-white mb-6">{t("readyToProtect")}</h2>
-            <p className="text-lg text-white/75 mb-10 max-w-2xl mx-auto">{t("expertDesc")}</p>
+            <h2 className="text-4xl font-bold text-foreground mb-6">{t("readyToProtect")}</h2>
+            <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">{t("expertDesc")}</p>
             <Link to="/detect">
-              <Button size="lg" variant="secondary" className="text-lg px-10 shadow-xl hover:shadow-2xl transition-all duration-300 group">
+              <Button size="lg" className="text-lg px-10 shadow-xl hover:shadow-2xl transition-all duration-300 group">
                 {t("startDetecting")}
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
